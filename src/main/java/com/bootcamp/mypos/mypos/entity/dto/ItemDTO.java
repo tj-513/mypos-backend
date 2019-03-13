@@ -1,4 +1,4 @@
-package com.bootcamp.mypos.mypos.entity;
+package com.bootcamp.mypos.mypos.entity.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import java.util.Date;
 
 @Entity
-public class Item {
+public class ItemDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

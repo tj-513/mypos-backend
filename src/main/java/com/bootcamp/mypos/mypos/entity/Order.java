@@ -3,7 +3,8 @@ package com.bootcamp.mypos.mypos.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
+
 
 @Entity
 @Table(name = "tbl_order")

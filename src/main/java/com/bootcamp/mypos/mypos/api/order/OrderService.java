@@ -22,8 +22,11 @@ class OrderService {
     Order updateOrder(Order order) throws OrderValidationException{
 
         // validate id, validate attributes make update
-        orderValidator.validateId(order.getId(),orderRepository);
+        Order existingOrder = orderValidator.validateId(order.getId(),orderRepository);
         orderValidator.validateOrder(order, orderRepository);
+
+        existingOrder.setOrderName(order.getOrderName());
+        existingOrder.setOrderStatus(order.getOrderStatus());
 
         return orderRepository.saveAndFlush(order);
 
