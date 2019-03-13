@@ -3,10 +3,9 @@ package com.bootcamp.mypos.mypos.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by TJR on 2/24/2018.
@@ -34,6 +33,10 @@ public class User {
 
     @JsonProperty("address")
     private String address;
+
+    @OneToMany(mappedBy ="user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orderList = new ArrayList<>();
+
 
 
     public Long getId() {
@@ -92,5 +95,14 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    @JsonIgnore
+    public List<Order> getOrderList() {
+        return orderList;
+    }
+
+    public void setOrderList(List<Order> orderList) {
+        this.orderList = orderList;
     }
 }

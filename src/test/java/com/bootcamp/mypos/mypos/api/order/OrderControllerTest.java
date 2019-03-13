@@ -2,6 +2,7 @@ package com.bootcamp.mypos.mypos.api.order;
 
 import com.bootcamp.mypos.mypos.entity.ErrorMessage;
 import com.bootcamp.mypos.mypos.entity.Order;
+import com.bootcamp.mypos.mypos.entity.User;
 import com.bootcamp.mypos.mypos.entity.dto.OrderDTO;
 import com.bootcamp.mypos.mypos.exception.OrderValidationError;
 import com.bootcamp.mypos.mypos.exception.OrderValidationException;
@@ -71,12 +72,15 @@ public class OrderControllerTest {
         order.setOrderName("some place in colombo");
         order.setOrderStatus("open");
 
+        User u = new User();
+        u.setId(10L);
+
         Order returnedOrder = new ModelMapper().map(order, Order.class);
-        returnedOrder.setId(10l);
+        returnedOrder.setUser(u);
 
         Mockito.when(orderService.createOrder(Mockito.any())).thenReturn(returnedOrder);
         Assertions.assertThat(orderController.createOrder(order).getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        Assertions.assertThat(((Order) orderController.createOrder(order).getBody()).getId()).isEqualTo(10L);
+        Assertions.assertThat(((Order) orderController.createOrder(order).getBody()).getUser().getId()).isEqualTo(10L);
     }
 
     @Test
@@ -86,8 +90,12 @@ public class OrderControllerTest {
         order.setOrderName("some place in colombo");
         order.setOrderStatus("open");
 
+
+        User u = new User();
+        u.setId(10L);
+
         Order returnedOrder = new ModelMapper().map(order, Order.class);
-        returnedOrder.setId(10l);
+        returnedOrder.setUser(u);
 
         OrderValidationException validationException = new OrderValidationException(OrderValidationError.UNIDENTIFIED_ORDER_STATE);
 
@@ -110,9 +118,11 @@ public class OrderControllerTest {
         order.setOrderName("some place in colombo");
         order.setOrderStatus("open");
 
-        Order returnedOrder = new ModelMapper().map(order, Order.class);
-        returnedOrder.setId(10l);
+        User u = new User();
+        u.setId(10L);
 
+        Order returnedOrder = new ModelMapper().map(order, Order.class);
+        returnedOrder.setUser(u);
 
         Mockito.when(orderService.createOrder(Mockito.any())).thenThrow(new RuntimeException());
         Assertions.assertThat(orderController.createOrder(order).getStatusCode()).isEqualTo(HttpStatus.valueOf(500));
@@ -130,8 +140,11 @@ public class OrderControllerTest {
         order.setOrderName("some place in colombo");
         order.setOrderStatus("open");
 
+        User u = new User();
+        u.setId(10L);
+
         Order returnedOrder = new ModelMapper().map(order, Order.class);
-        returnedOrder.setId(10l);
+        returnedOrder.setUser(u);
         returnedOrder.setOrderName("newdoe");
 
         Mockito.when(orderService.updateOrder(Mockito.any())).thenReturn(returnedOrder);
@@ -149,9 +162,11 @@ public class OrderControllerTest {
         order.setOrderName("some place in colombo");
         order.setOrderStatus("open");
 
+        User u = new User();
+        u.setId(10L);
 
         Order returnedOrder = new ModelMapper().map(order, Order.class);
-        returnedOrder.setId(10l);
+        returnedOrder.setUser(u);
 
         OrderValidationException validationException = new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
 
@@ -159,7 +174,7 @@ public class OrderControllerTest {
         Assertions.assertThat(orderController.updateOrder(order).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
         Assertions.assertThat(((ErrorMessage) orderController.updateOrder(order).getBody())
                 .getErrorMessageText())
-                .isEqualTo(OrderValidationError.NON_EXISTENT_ID.getMessage() + ": " + order.getOrderId());
+                .isEqualTo(OrderValidationError.NON_EXISTENT_ID.getMessage() + ": " + order.getId());
 
         Assertions.assertThat(((ErrorMessage) orderController.updateOrder(order).getBody())
                 .getStatus())
@@ -173,8 +188,11 @@ public class OrderControllerTest {
         OrderDTO order = new OrderDTO();
         order.setOrderName("some place in colombo");
 
+        User u = new User();
+        u.setId(10L);
+
         Order returnedOrder = new ModelMapper().map(order, Order.class);
-        returnedOrder.setId(10l);
+        returnedOrder.setUser(u);
 
 
         Mockito.when(orderService.updateOrder(Mockito.any())).thenThrow(new RuntimeException());

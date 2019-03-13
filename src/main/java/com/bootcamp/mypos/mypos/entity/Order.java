@@ -1,5 +1,6 @@
 package com.bootcamp.mypos.mypos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.util.Date;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "order_id")
     private Long id;
 
     @JsonProperty("orderName")
@@ -21,6 +23,10 @@ public class Order {
 
     @JsonProperty("dateCreated")
     private Date dateCreated;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_order_id")
+    private User user;
 
     public Long getId() {
         return id;
@@ -52,5 +58,14 @@ public class Order {
 
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

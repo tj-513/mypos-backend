@@ -62,15 +62,14 @@ class OrderController {
 
     @PostMapping()
     ResponseEntity createOrder(@RequestBody OrderDTO orderDTO) {
-
-        Order order = new ModelMapper().map(orderDTO, Order.class);
+        Order order = null;
         try {
-            order = orderService.createOrder(order);
+            order = orderService.createOrder(orderDTO);
             return new ResponseEntity<>(order, HttpStatus.CREATED);
 
         } catch (OrderValidationException ex) {
 
-            ErrorMessage message = getErrorMessage(order, ex);
+            ErrorMessage message = getErrorMessage(orderDTO, ex);
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception ex) {
@@ -92,7 +91,7 @@ class OrderController {
             return new ResponseEntity<>(order, HttpStatus.OK);
 
         } catch (OrderValidationException ex) {
-            ErrorMessage message = getErrorMessage(order, ex);
+            ErrorMessage message = getErrorMessage(orderDTO, ex);
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception ex) {
@@ -136,7 +135,7 @@ class OrderController {
     }
 
     // populates the error message
-    private ErrorMessage getErrorMessage(Order order, OrderValidationException ex) {
+    private ErrorMessage getErrorMessage(OrderDTO order, OrderValidationException ex) {
         ErrorMessage message = new ErrorMessage();
 
         OrderValidationError validationError = ex.getValidationError();

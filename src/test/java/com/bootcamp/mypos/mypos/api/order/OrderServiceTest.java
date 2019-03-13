@@ -1,6 +1,9 @@
 package com.bootcamp.mypos.mypos.api.order;
 
+import com.bootcamp.mypos.mypos.api.user.UserRepository;
 import com.bootcamp.mypos.mypos.entity.Order;
+import com.bootcamp.mypos.mypos.entity.User;
+import com.bootcamp.mypos.mypos.entity.dto.OrderDTO;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,9 +26,12 @@ public class OrderServiceTest {
     @Mock
     OrderRepository orderRepository;
 
+    @Mock
+    UserRepository userRepository;
+
     @Test
     public void testCreateOrderSuccessfully() throws Exception{
-        Order order = new Order();
+        OrderDTO order = new OrderDTO();
         order.setOrderName("some place in colombo");
         order.setOrderStatus("open");
 
@@ -33,7 +39,8 @@ public class OrderServiceTest {
         Order returnedOrder = new ModelMapper().map(order,Order.class);
         returnedOrder.setId(10L);
 
-        Mockito.when(orderRepository.saveAndFlush(order)).thenReturn(returnedOrder);
+        Mockito.when(orderRepository.saveAndFlush(Mockito.any())).thenReturn(returnedOrder);
+        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(new User()));
         Assertions.assertThat(orderService.createOrder(order).getId()).isNotEqualTo(0L);
     }
 

@@ -8,10 +8,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.Date;
 
-@Entity
+
 public class ItemDTO {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     private Long id;
 
     @JsonProperty("itemName")

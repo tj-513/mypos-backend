@@ -2,15 +2,10 @@ package com.bootcamp.mypos.mypos.entity.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 public class UserDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long userId;
 
     @JsonProperty("username")
     private String username;
@@ -30,12 +25,13 @@ public class UserDTO {
     @JsonProperty("address")
     private String address;
 
-    public Long getId() {
-        return id;
+
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
@@ -86,3 +82,4 @@ public class UserDTO {
         this.address = address;
     }
 }
+
