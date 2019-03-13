@@ -1,6 +1,7 @@
 package com.bootcamp.mypos.mypos.api.user;
 
 import com.bootcamp.mypos.mypos.entity.ErrorMessage;
+import com.bootcamp.mypos.mypos.entity.Order;
 import com.bootcamp.mypos.mypos.entity.User;
 import com.bootcamp.mypos.mypos.entity.dto.UserDTO;
 import com.bootcamp.mypos.mypos.exception.UserValidationError;
@@ -14,6 +15,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserControllerTest {
@@ -47,8 +51,6 @@ public class UserControllerTest {
         Assertions.assertThat(
                 ((ErrorMessage) userController.getUser(userId).getBody())
                         .getStatus()).isEqualTo(HttpStatus.valueOf(400).value());
-
-
     }
 
     @Test
@@ -251,6 +253,46 @@ public class UserControllerTest {
 
         Assertions.assertThat(
                 ((ErrorMessage) userController.deleteUser(userId).getBody())
+                        .getStatus()).isEqualTo(HttpStatus.valueOf(500).value());
+    }
+
+
+
+
+    @Test
+    public void getOrderListSuccessfully() throws Exception {
+
+        List<Order> orderList = new ArrayList<>();
+        Mockito.when(userService.getOrderList(Mockito.any())).thenReturn(orderList);
+        Assertions.assertThat(userController.getOrderList(Mockito.any()).getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void getOrderListReturnsErrorMsgOnInvalidId() throws Exception {
+        final Long userId = 100L;
+
+        UserValidationException validationException = new UserValidationException(UserValidationError.NON_EXISTENT_ID);
+        Mockito.when(userService.getOrderList(Mockito.any())).thenThrow(validationException);
+        Assertions.assertThat(userController.getOrderList(userId).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
+        Assertions.assertThat(
+                ((ErrorMessage) userController.getOrderList(userId).getBody())
+                        .getErrorMessageText())
+                .isEqualTo(UserValidationError.NON_EXISTENT_ID.getMessage() + ": " + userId);
+        Assertions.assertThat(
+                ((ErrorMessage) userController.getOrderList(userId).getBody())
+                        .getStatus()).isEqualTo(HttpStatus.valueOf(400).value());
+
+    }
+
+    @Test
+    public void getOrderListReturnsErrorMsgOnServerError() throws Exception {
+        final Long userId = 100L;
+
+        Mockito.when(userService.getOrderList(Mockito.any())).thenThrow(new RuntimeException());
+        Assertions.assertThat(userController.getOrderList(userId).getStatusCode()).isEqualTo(HttpStatus.valueOf(500));
+
+        Assertions.assertThat(
+                ((ErrorMessage) userController.getOrderList(userId).getBody())
                         .getStatus()).isEqualTo(HttpStatus.valueOf(500).value());
     }
 }

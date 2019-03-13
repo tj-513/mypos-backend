@@ -1,9 +1,12 @@
 package com.bootcamp.mypos.mypos.api.user;
 
+import com.bootcamp.mypos.mypos.entity.Order;
 import com.bootcamp.mypos.mypos.entity.User;
 import com.bootcamp.mypos.mypos.exception.UserValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 class UserService {
@@ -29,11 +32,14 @@ class UserService {
 
     }
 
+
+    List<Order> getOrderList(Long userId) throws UserValidationException{
+        User user = userValidator.validateId(userId, userRepository);
+        return user.getOrderList();
+    }
+
     User getUser(Long userId) throws UserValidationException{
-
-        // return if found
         return userValidator.validateId(userId, userRepository);
-
     }
 
     boolean deleteUser(Long userId) throws UserValidationException{

@@ -90,4 +90,20 @@ public class UserServiceTest {
         Mockito.when(userRepository.findById(Mockito.any())).thenReturn(optionalUser);
         Assertions.assertThat(userService.deleteUser(Mockito.any())).isTrue();
     }
+
+    @Test
+    public void getUserOrdersListSucessfully() throws Exception{
+
+        User user = new User();
+        user.setLastName("Smith");
+
+        User newUser = new ModelMapper().map(user,User.class);
+        newUser.setLastName("Smith");
+
+        Optional<User> optionalUser = Optional.of(newUser);
+
+        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(optionalUser);
+        Assertions.assertThat(userService.getUser(Mockito.any()).getOrderList()).isNotNull();
+    }
+
 }
