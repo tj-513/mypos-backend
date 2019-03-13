@@ -1,6 +1,5 @@
 package com.bootcamp.mypos.mypos.api.item;
 
-import com.bootcamp.mypos.mypos.api.item.ItemRepository;
 import com.bootcamp.mypos.mypos.entity.Item;
 import com.bootcamp.mypos.mypos.exception.ItemValidationError;
 import com.bootcamp.mypos.mypos.exception.ItemValidationException;
