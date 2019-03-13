@@ -1,16 +1,17 @@
-package com.bootcamp.mypos.mypos.entity;
+package com.bootcamp.mypos.mypos.entity.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.*;
-import java.sql.Date;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.util.Date;
 
-@Entity
-@Table(name = "tbl_order")
-public class Order {
+public class OrderDTO {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long orderId;
 
     @JsonProperty("orderName")
     private String orderName;
@@ -21,12 +22,12 @@ public class Order {
     @JsonProperty("dateCreated")
     private Date dateCreated;
 
-    public Long getId() {
-        return id;
+    public Long getOrderId() {
+        return orderId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
     public String getOrderName() {
