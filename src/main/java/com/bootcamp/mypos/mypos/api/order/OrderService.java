@@ -146,4 +146,26 @@ class OrderService {
         return orderItemRepository.saveAndFlush(orderItem);
 
     }
+
+    OrderItem deleteOrderItem(OrderItemDTO orderItemDTO) throws OrderValidationException {
+
+        CompositeOrderItemId id = new CompositeOrderItemId(orderItemDTO.getOrderId(), orderItemDTO.getItemId());
+
+        Optional<OrderItem> orderItemOptional = orderItemRepository.findById(id);
+
+
+        if(!orderItemOptional.isPresent())
+            throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
+
+
+        OrderItem orderItem = orderItemOptional.get();
+
+        Long userId = orderItem.getOrder().getUser().getId();
+
+        if(userId != orderItemDTO.getUserId())
+            throw new OrderValidationException(OrderValidationError.UNAUTHORIZED_USER);
+
+        return orderItemRepository.saveAndFlush(orderItem);
+
+    }
 }

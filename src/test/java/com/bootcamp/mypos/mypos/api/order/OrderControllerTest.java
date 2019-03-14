@@ -304,7 +304,6 @@ public class OrderControllerTest {
     }
 
 
-
     @Test
     public void getOrderListSuccessfully() throws Exception {
 
@@ -346,6 +345,32 @@ public class OrderControllerTest {
     }
 
 
+    @Test
+    public void deleteOrderItemSuccessfully() throws Exception {
+
+        Mockito.when(orderService.deleteOrderItem(Mockito.any())).thenReturn(new OrderItem());
+        Assertions.assertThat(orderController.deleteOrderItem(Mockito.any()).getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void deleteOrderItemReturnsErrorMsgOnInvalidId() throws Exception {
+        OrderItemDTO dto = new OrderItemDTO();
+        dto.setItemId(100L);
+        dto.setOrderId(40L);
+
+        OrderValidationException validationException = new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
+        Mockito.when(orderService.deleteOrderItem(Mockito.any())).thenThrow(validationException);
+        Assertions.assertThat(orderController.deleteOrderItem(dto).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
+        Assertions.assertThat(
+                ((ErrorMessage) orderController.deleteOrderItem(dto).getBody())
+                        .getErrorMessageText())
+                .isEqualTo(OrderValidationError.NON_EXISTENT_ID.getMessage()
+                        + String.format(": order:%d  item:%d", dto.getOrderId(), dto.getItemId()));
+        Assertions.assertThat(
+                ((ErrorMessage) orderController.deleteOrderItem(dto).getBody())
+                        .getStatus()).isEqualTo(HttpStatus.valueOf(400).value());
+
+    }
 
 
 }

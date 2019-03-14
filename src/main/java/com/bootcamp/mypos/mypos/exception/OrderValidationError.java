@@ -8,7 +8,8 @@ public enum OrderValidationError {
     NON_EXISTENT_ITEM_ID("Provided item ID does not exist"),
     QUANTITY_LARGER_THAN_AVAILABLE("Ordered quantity is larger than available for item"),
     INVALID_QUANTITY("Invalid quantity requested"),
-    ITEM_ALREADY_EXISTS_IN_ORDER("Item already exists in order");
+    ITEM_ALREADY_EXISTS_IN_ORDER("Item already exists in order"),
+    UNAUTHORIZED_USER("Only the creator of order can remove this order item");
 
     private final String message;
 

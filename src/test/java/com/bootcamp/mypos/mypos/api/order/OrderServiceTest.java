@@ -111,7 +111,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void addOrderSuccessfully() throws Exception {
+    public void addOrderItemSuccessfully() throws Exception {
 
         OrderItemDTO newOrder = new OrderItemDTO();
         newOrder.setItemId(10L);
@@ -200,5 +200,27 @@ public class OrderServiceTest {
         Mockito.when(itemRepository.findById(Mockito.any())).thenReturn(Optional.of(item));
         Mockito.when(orderItemRepository.saveAndFlush(Mockito.any())).thenReturn(order);
         orderService.addOrderItem(newOrder);
+    }
+
+    @Test
+    public void deleteOrderItemSuccessfully() throws Exception {
+
+        OrderItemDTO newOrder = new OrderItemDTO();
+        newOrder.setItemId(10L);
+        newOrder.setOrderId(15L);
+        newOrder.setQuantity(5);
+        newOrder.setUserId(10L);
+
+        Item item = new Item();
+        item.setAmountAvailable(100);
+
+        OrderItem order = new ModelMapper().map(newOrder, OrderItem.class);
+
+
+        Mockito.when(orderRepository.findById(Mockito.any())).thenReturn(Optional.of(new Order()));
+        Mockito.when(orderItemRepository.findById(Mockito.any())).thenReturn(Optional.of(order));
+        Mockito.when(orderItemRepository.saveAndFlush(Mockito.any())).thenReturn(order);
+        Assertions.assertThat(orderService.deleteOrderItem(newOrder).getItemId()).isEqualTo(10L);
+        Assertions.assertThat(orderService.deleteOrderItem(newOrder).getOrderId()).isEqualTo(15L);
     }
 }

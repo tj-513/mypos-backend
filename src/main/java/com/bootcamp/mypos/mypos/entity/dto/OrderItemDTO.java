@@ -4,6 +4,7 @@ public class OrderItemDTO {
     private Long orderId;
     private Long itemId;
     private Integer quantity;
+    private Long userId;
 
     public Long getOrderId() {
         return orderId;
@@ -27,5 +28,13 @@ public class OrderItemDTO {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
