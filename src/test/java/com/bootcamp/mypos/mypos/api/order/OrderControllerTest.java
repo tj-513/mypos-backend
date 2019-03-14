@@ -270,6 +270,26 @@ public class OrderControllerTest {
 
     }
 
+
+    @Test
+    public void addOrderItemReturnsErrorMsgOnTooLargeQuantity() throws Exception {
+        OrderItemDTO dto = new OrderItemDTO();
+        dto.setItemId(100L);
+
+        OrderValidationException validationException = new OrderValidationException(OrderValidationError.QUANTITY_LARGER_THAN_AVAILABLE);
+        Mockito.when(orderService.addOrderItem(Mockito.any())).thenThrow(validationException);
+        Assertions.assertThat(orderController.addItemToOrder(dto).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
+        Assertions.assertThat(
+                ((ErrorMessage) orderController.addItemToOrder(dto).getBody())
+                        .getErrorMessageText())
+                .isEqualTo(OrderValidationError.QUANTITY_LARGER_THAN_AVAILABLE.getMessage() + ": " + dto.getQuantity());
+        Assertions.assertThat(
+                ((ErrorMessage) orderController.addItemToOrder(dto).getBody())
+                        .getStatus()).isEqualTo(HttpStatus.valueOf(400).value());
+
+    }
+
+
     @Test
     public void addOrderItemReturnsErrorMsgOnServerError() throws Exception {
         OrderItemDTO dto = new OrderItemDTO();

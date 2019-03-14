@@ -116,11 +116,15 @@ public class OrderServiceTest {
         OrderItemDTO newOrder = new OrderItemDTO();
         newOrder.setItemId(10L);
         newOrder.setOrderId(15L);
+        newOrder.setQuantity(5);
+
+        Item item = new Item();
+        item.setAmountAvailable(100);
 
         OrderItem order = new ModelMapper().map(newOrder, OrderItem.class);
 
         Mockito.when(orderRepository.findById(Mockito.any())).thenReturn(Optional.of(new Order()));
-        Mockito.when(itemRepository.findById(Mockito.any())).thenReturn(Optional.of(new Item()));
+        Mockito.when(itemRepository.findById(Mockito.any())).thenReturn(Optional.of(item));
         Mockito.when(orderItemRepository.saveAndFlush(Mockito.any())).thenReturn(order);
         Assertions.assertThat(orderService.addOrderItem(newOrder).getItemId()).isEqualTo(10L);
         Assertions.assertThat(orderService.addOrderItem(newOrder).getOrderId()).isEqualTo(15L);
@@ -156,5 +160,45 @@ public class OrderServiceTest {
         Mockito.when(orderItemRepository.saveAndFlush(Mockito.any())).thenReturn(order);
         Assertions.assertThat(orderService.addOrderItem(newOrder).getItemId()).isEqualTo(10L);
         Assertions.assertThat(orderService.addOrderItem(newOrder).getOrderId()).isEqualTo(15L);
+    }
+
+    @Test(expected = OrderValidationException.class)
+    public void throwExceptionOnInvaliQuantity() throws Exception {
+
+        OrderItemDTO newOrder = new OrderItemDTO();
+        newOrder.setItemId(10L);
+        newOrder.setOrderId(15L);
+        newOrder.setQuantity(10);
+
+        Item item = new Item();
+        item.setId(10L);
+        item.setAmountAvailable(5);
+
+        OrderItem order = new ModelMapper().map(newOrder, OrderItem.class);
+
+        Mockito.when(orderRepository.findById(Mockito.any())).thenReturn(Optional.ofNullable(null));
+        Mockito.when(itemRepository.findById(Mockito.any())).thenReturn(Optional.of(item));
+        Mockito.when(orderItemRepository.saveAndFlush(Mockito.any())).thenReturn(order);
+        orderService.addOrderItem(newOrder);
+    }
+
+    @Test(expected = OrderValidationException.class)
+    public void throwExceptionOnNegativeQuantity() throws Exception {
+
+        OrderItemDTO newOrder = new OrderItemDTO();
+        newOrder.setItemId(10L);
+        newOrder.setOrderId(15L);
+        newOrder.setQuantity(-1);
+
+        Item item = new Item();
+        item.setId(10L);
+        item.setAmountAvailable(5);
+
+        OrderItem order = new ModelMapper().map(newOrder, OrderItem.class);
+
+        Mockito.when(orderRepository.findById(Mockito.any())).thenReturn(Optional.ofNullable(null));
+        Mockito.when(itemRepository.findById(Mockito.any())).thenReturn(Optional.of(item));
+        Mockito.when(orderItemRepository.saveAndFlush(Mockito.any())).thenReturn(order);
+        orderService.addOrderItem(newOrder);
     }
 }

@@ -153,6 +153,11 @@ class OrderController {
                 case NON_EXISTENT_ORDER_ID:
                     message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderItemDTO.getOrderId());
                     break;
+                case QUANTITY_LARGER_THAN_AVAILABLE:
+                case INVALID_QUANTITY:
+                    message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderItemDTO.getQuantity());
+                    break;
+
                 default:
 
             }

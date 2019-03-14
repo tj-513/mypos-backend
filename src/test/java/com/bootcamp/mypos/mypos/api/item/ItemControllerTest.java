@@ -27,7 +27,6 @@ public class ItemControllerTest {
     @Test
     public void getItemSuccessfully() throws Exception {
 
-
         Mockito.when(itemService.getItem(Mockito.any())).thenReturn(new Item());
         Assertions.assertThat(itemController.getItem(Mockito.any()).getStatusCode()).isEqualTo(HttpStatus.OK);
 

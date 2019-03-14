@@ -76,15 +76,27 @@ class OrderService {
 
 
     OrderItem addOrderItem(OrderItemDTO orderItemDTO) throws OrderValidationException {
-        Optional<Order> order = orderRepository.findById(orderItemDTO.getOrderId());
-        Optional<Item>  item = itemRepository.findById(orderItemDTO.getItemId());
+        Optional<Order> orderOptional = orderRepository.findById(orderItemDTO.getOrderId());
+        Optional<Item>  itemOptional = itemRepository.findById(orderItemDTO.getItemId());
 
-        if(!order.isPresent()) throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ORDER_ID);
-        if(!item.isPresent()) throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ITEM_ID);
+        if(!orderOptional.isPresent())
+            throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ORDER_ID);
+        if(!itemOptional.isPresent())
+            throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ITEM_ID);
+
+        Item item = itemOptional.get();
+        Order order = orderOptional.get();
+
+        if(item.getAmountAvailable() < orderItemDTO.getQuantity())
+            throw new OrderValidationException(OrderValidationError.QUANTITY_LARGER_THAN_AVAILABLE);
+
+        if(orderItemDTO.getQuantity() < 1)
+            throw new OrderValidationException(OrderValidationError.INVALID_QUANTITY);
+
 
         OrderItem orderItem = new OrderItem();
-        orderItem.setOrder(order.get());
-        orderItem.setItem(item.get());
+        orderItem.setOrder(order);
+        orderItem.setItem(item);
         orderItem.setQuantity(orderItemDTO.getQuantity());
         orderItem.setOrderId(orderItemDTO.getOrderId());
         orderItem.setItemId(orderItemDTO.getItemId());

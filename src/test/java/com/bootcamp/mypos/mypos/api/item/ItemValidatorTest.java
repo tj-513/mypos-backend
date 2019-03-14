@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Optional;
+
 import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class ItemValidatorTest {
@@ -58,6 +60,22 @@ public class ItemValidatorTest {
     }
 
 
+    @Test(expected = ItemValidationException.class)
+    public void validateIdThrowsExceptionOnNonExistentId() throws Exception {
+        Item item = new Item();
+        item.setItemName("orange");
+        item.setAmountAvailable(-1);
+        item.setId(4L);
 
+        Item returned = new Item();
+        returned.setItemName("apple");
+        returned.setId(5L);
+
+
+        ItemValidator validator = new ItemValidator();
+        Mockito.when(itemRepository.findById(Mockito.any())).thenReturn(Optional.ofNullable(null));
+        validator.validateId(item.getId(),itemRepository);
+
+    }
 
 }
