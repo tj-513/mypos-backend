@@ -19,6 +19,9 @@ public class ItemDTO {
     @JsonProperty("amountAvailable")
     private Integer amountAvailable;
 
+    @JsonProperty("unitPrice")
+    private Double unitPrice;
+
     @JsonProperty("dateAdded")
     private Date dateAdded;
 
@@ -52,5 +55,13 @@ public class ItemDTO {
 
     public void setDateAdded(Date dateAdded) {
         this.dateAdded = dateAdded;
+    }
+
+    public Double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(Double unitPrice) {
+        this.unitPrice = unitPrice;
     }
 }

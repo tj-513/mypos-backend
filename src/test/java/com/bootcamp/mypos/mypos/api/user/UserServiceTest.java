@@ -103,7 +103,7 @@ public class UserServiceTest {
         Optional<User> optionalUser = Optional.of(newUser);
 
         Mockito.when(userRepository.findById(Mockito.any())).thenReturn(optionalUser);
-        Assertions.assertThat(userService.getUser(Mockito.any()).getOrderList()).isNotNull();
+        Assertions.assertThat(userService.getOrderList(Mockito.any())).isNotNull();
     }
 
 }
