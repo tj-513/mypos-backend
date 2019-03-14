@@ -219,4 +219,26 @@ class UserController {
         message.setStatus(400);
         return message;
     }
+
+    @ApiOperation(value = "User Login",response = User.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successfully logged in user"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 500, message = "Server error")
+    })
+    @PostMapping("/login")
+    ResponseEntity userLogin(@RequestBody UserDTO userDTO) {
+
+        try {
+            return new ResponseEntity<>("Success", HttpStatus.OK);
+
+        } catch (Exception ex) {
+
+            ErrorMessage message = new ErrorMessage();
+            message.setStatus(CODE_SERVER_ERROR);
+            message.setErrorMessageText(MSG_SERVER_ERROR);
+            return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
+        }
+    }
+
 }
