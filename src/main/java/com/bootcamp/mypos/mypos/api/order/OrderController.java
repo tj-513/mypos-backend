@@ -12,7 +12,9 @@ package com.bootcamp.mypos.mypos.api.order;
 
 import com.bootcamp.mypos.mypos.entity.ErrorMessage;
 import com.bootcamp.mypos.mypos.entity.Order;
+import com.bootcamp.mypos.mypos.entity.OrderItem;
 import com.bootcamp.mypos.mypos.entity.dto.OrderDTO;
+import com.bootcamp.mypos.mypos.entity.dto.OrderItemDTO;
 import com.bootcamp.mypos.mypos.exception.OrderValidationError;
 import com.bootcamp.mypos.mypos.exception.OrderValidationException;
 import org.modelmapper.ModelMapper;
@@ -131,6 +133,66 @@ class OrderController {
             message.setErrorMessageText(MSG_SERVER_ERROR + ": " + ex.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
+        }
+    }
+
+    @PutMapping("/addItem")
+    ResponseEntity addItemToOrder(@RequestBody OrderItemDTO orderItemDTO) {
+
+        try {
+            OrderItem order = orderService.addOrderItem(orderItemDTO);
+            return new ResponseEntity<>(order, HttpStatus.OK);
+
+        } catch (OrderValidationException ex) {
+            ErrorMessage message = new ErrorMessage();
+            message.setStatus(400);
+            switch (ex.getValidationError()) {
+                case NON_EXISTENT_ITEM_ID:
+                    message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderItemDTO.getItemId());
+                    break;
+                case NON_EXISTENT_ORDER_ID:
+                    message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderItemDTO.getOrderId());
+                    break;
+                default:
+
+            }
+
+            return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
+
+        } catch (Exception ex) {
+
+            ErrorMessage message = new ErrorMessage();
+            message.setStatus(CODE_SERVER_ERROR);
+            message.setErrorMessageText(MSG_SERVER_ERROR);
+            return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
+
+        }
+    }
+
+    @GetMapping("/items/{orderId}")
+    ResponseEntity getOrderItems(@PathVariable Long orderId) {
+
+        try {
+
+            Order order = orderService.getOrder(orderId);
+            return new ResponseEntity<>(order.getOrderItems(), HttpStatus.OK);
+
+        } catch (OrderValidationException e) {
+
+            ErrorMessage message = new ErrorMessage();
+            message.setStatus(400);
+
+            if (e.getValidationError() == OrderValidationError.NON_EXISTENT_ID) {
+                message.setErrorMessageText(e.getValidationError().getMessage() + ": " + orderId);
+            } else {
+                message.setErrorMessageText(e.getValidationError().getMessage());
+            }
+            return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
+
+        } catch (Exception e) {
+            ErrorMessage message = new ErrorMessage();
+            message.setStatus(CODE_SERVER_ERROR);
+            return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
         }
     }
 
