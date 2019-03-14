@@ -1,11 +1,16 @@
 package com.bootcamp.mypos.mypos.api.user;
 
 import com.bootcamp.mypos.mypos.entity.ErrorMessage;
+import com.bootcamp.mypos.mypos.entity.Item;
 import com.bootcamp.mypos.mypos.entity.Order;
 import com.bootcamp.mypos.mypos.entity.User;
 import com.bootcamp.mypos.mypos.entity.dto.UserDTO;
 import com.bootcamp.mypos.mypos.exception.UserValidationError;
 import com.bootcamp.mypos.mypos.exception.UserValidationException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +21,7 @@ import java.util.List;
 
 
 @RestController
+@Api(value="mypos", description="Operations pertaining to Users in in System")
 @RequestMapping("api/users")
 class UserController {
 
@@ -25,6 +31,13 @@ class UserController {
     @Autowired
     private UserService userService;
 
+
+    @ApiOperation(value = "View Details about the given user from id",response = User.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved user"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 500, message = "Server error")
+    })
     @GetMapping("/{userId}")
     ResponseEntity getUser(@PathVariable Long userId) {
 
@@ -52,7 +65,12 @@ class UserController {
         }
     }
 
-
+    @ApiOperation(value = "Create new user",response = User.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successfully created user"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 500, message = "Server error")
+    })
     @PostMapping()
     ResponseEntity createUser(@RequestBody UserDTO userDTO) {
 
@@ -75,7 +93,12 @@ class UserController {
         }
     }
 
-
+    @ApiOperation(value = "Update user",response = User.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated user"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 500, message = "Server error")
+    })
     @PutMapping()
     ResponseEntity updateUser(@RequestBody UserDTO userDTO) {
 
@@ -98,6 +121,12 @@ class UserController {
         }
     }
 
+    @ApiOperation(value = "Delete user",response = User.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully deleted user"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 500, message = "Server error")
+    })
     @DeleteMapping("/{userId}")
     ResponseEntity deleteUser(@PathVariable Long userId) {
 
@@ -128,6 +157,12 @@ class UserController {
         }
     }
 
+    @ApiOperation(value = "Returns a list of all orders for a given user",response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved the list"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 500, message = "Server error")
+    })
     @GetMapping("/orderlist/{userId}")
     ResponseEntity getOrderList(@PathVariable Long userId) {
 

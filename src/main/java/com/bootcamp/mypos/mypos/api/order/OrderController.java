@@ -11,20 +11,28 @@ package com.bootcamp.mypos.mypos.api.order;
 
 
 import com.bootcamp.mypos.mypos.entity.ErrorMessage;
+import com.bootcamp.mypos.mypos.entity.Item;
 import com.bootcamp.mypos.mypos.entity.Order;
 import com.bootcamp.mypos.mypos.entity.OrderItem;
 import com.bootcamp.mypos.mypos.entity.dto.OrderDTO;
 import com.bootcamp.mypos.mypos.entity.dto.OrderItemDTO;
 import com.bootcamp.mypos.mypos.exception.OrderValidationError;
 import com.bootcamp.mypos.mypos.exception.OrderValidationException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
+@Api(value="mypos", description="Operations pertaining to Orders in System")
 @RequestMapping("api/orders")
 class OrderController {
 
@@ -34,6 +42,12 @@ class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @ApiOperation(value = "View Details about the given order from id",response = Item.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved order"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 500, message = "Server error")
+    })
     @GetMapping("/{orderId}")
     ResponseEntity getOrder(@PathVariable Long orderId) {
 
@@ -62,6 +76,12 @@ class OrderController {
     }
 
 
+    @ApiOperation(value = "Create a new order",response = Order.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successfully created order"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 500, message = "Server error")
+    })
     @PostMapping()
     ResponseEntity createOrder(@RequestBody OrderDTO orderDTO) {
         Order order = null;
@@ -83,7 +103,12 @@ class OrderController {
         }
     }
 
-
+    @ApiOperation(value = "Update an order",response = Order.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated order"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 500, message = "Server error")
+    })
     @PutMapping()
     ResponseEntity updateOrder(@RequestBody OrderDTO orderDTO) {
 
@@ -106,6 +131,12 @@ class OrderController {
         }
     }
 
+    @ApiOperation(value = "Delete an order",response = Order.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully deleted order"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 500, message = "Server error")
+    })
     @DeleteMapping("/{orderId}")
     ResponseEntity deleteOrder(@PathVariable Long orderId) {
 
@@ -136,6 +167,12 @@ class OrderController {
         }
     }
 
+    @ApiOperation(value = "Add an order item to an order",response = OrderItem.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully added order item"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 500, message = "Server error")
+    })
     @PutMapping("/addItem")
     ResponseEntity addItemToOrder(@RequestBody OrderItemDTO orderItemDTO) {
 
@@ -177,6 +214,13 @@ class OrderController {
         }
     }
 
+
+    @ApiOperation(value = "Update order item quantity",response = Order.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated order item"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 500, message = "Server error")
+    })
     @PutMapping("/changeItemQuantity")
     ResponseEntity changeOrderItemQuantity(@RequestBody OrderItemDTO orderItemDTO) {
 
@@ -218,7 +262,12 @@ class OrderController {
         }
     }
 
-
+    @ApiOperation(value = "Delete an order  item",response = Order.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully deleted order item"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 500, message = "Server error")
+    })
     @DeleteMapping("/deleteOrderItem")
     ResponseEntity deleteOrderItem(@RequestBody OrderItemDTO orderItemDTO) {
 
@@ -257,6 +306,13 @@ class OrderController {
         }
     }
 
+
+    @ApiOperation(value = "Get list of items in an order",response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved list"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 500, message = "Server error")
+    })
     @GetMapping("/items/{orderId}")
     ResponseEntity getOrderItems(@PathVariable Long orderId) {
 
