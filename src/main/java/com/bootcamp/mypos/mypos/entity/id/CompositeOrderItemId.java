@@ -10,6 +10,10 @@ public class CompositeOrderItemId implements Serializable {
     public CompositeOrderItemId() {
     }
 
+    public CompositeOrderItemId(Long orderId, Long itemId) {
+        this.orderId = orderId;
+        this.itemId = itemId;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -8,6 +8,7 @@ import com.bootcamp.mypos.mypos.entity.OrderItem;
 import com.bootcamp.mypos.mypos.entity.User;
 import com.bootcamp.mypos.mypos.entity.dto.OrderDTO;
 import com.bootcamp.mypos.mypos.entity.dto.OrderItemDTO;
+import com.bootcamp.mypos.mypos.entity.id.CompositeOrderItemId;
 import com.bootcamp.mypos.mypos.exception.OrderValidationError;
 import com.bootcamp.mypos.mypos.exception.OrderValidationException;
 import org.modelmapper.ModelMapper;
@@ -76,6 +77,16 @@ class OrderService {
 
 
     OrderItem addOrderItem(OrderItemDTO orderItemDTO) throws OrderValidationException {
+
+        // if the order item already added return the existing item
+        Optional<OrderItem> orderItemExisting = orderItemRepository
+                .findById(new CompositeOrderItemId(orderItemDTO.getOrderId(),orderItemDTO.getItemId()));
+
+        if(orderItemExisting.isPresent()){
+            throw new OrderValidationException(OrderValidationError.ITEM_ALREADY_EXISTS_IN_ORDER);
+        }
+
+
         Optional<Order> orderOptional = orderRepository.findById(orderItemDTO.getOrderId());
         Optional<Item>  itemOptional = itemRepository.findById(orderItemDTO.getItemId());
 
@@ -100,6 +111,37 @@ class OrderService {
         orderItem.setQuantity(orderItemDTO.getQuantity());
         orderItem.setOrderId(orderItemDTO.getOrderId());
         orderItem.setItemId(orderItemDTO.getItemId());
+
+        return orderItemRepository.saveAndFlush(orderItem);
+
+    }
+
+    OrderItem changeOrderItemQuantity(OrderItemDTO orderItemDTO) throws OrderValidationException {
+        Optional<Item>  itemOptional = itemRepository.findById(orderItemDTO.getItemId());
+
+        CompositeOrderItemId id = new CompositeOrderItemId(orderItemDTO.getOrderId(), orderItemDTO.getItemId());
+
+        Optional<OrderItem> orderItemOptional = orderItemRepository.findById(id);
+
+        if(!itemOptional.isPresent())
+            throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ITEM_ID);
+
+        if(!orderItemOptional.isPresent())
+            throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
+
+        Item item = itemOptional.get();
+
+
+        if(item.getAmountAvailable() < orderItemDTO.getQuantity())
+            throw new OrderValidationException(OrderValidationError.QUANTITY_LARGER_THAN_AVAILABLE);
+
+        if(orderItemDTO.getQuantity() < 1)
+            throw new OrderValidationException(OrderValidationError.INVALID_QUANTITY);
+
+
+        OrderItem orderItem = orderItemOptional.get();
+        orderItem.setQuantity(orderItemDTO.getQuantity());
+
 
         return orderItemRepository.saveAndFlush(orderItem);
 

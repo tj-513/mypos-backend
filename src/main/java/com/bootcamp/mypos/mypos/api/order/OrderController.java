@@ -153,6 +153,50 @@ class OrderController {
                 case NON_EXISTENT_ORDER_ID:
                     message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderItemDTO.getOrderId());
                     break;
+                case ITEM_ALREADY_EXISTS_IN_ORDER:
+                    message.setErrorMessageText(ex.getValidationError().getMessage());
+                    break;
+                case QUANTITY_LARGER_THAN_AVAILABLE:
+                case INVALID_QUANTITY:
+                    message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderItemDTO.getQuantity());
+                    break;
+
+                default:
+
+            }
+
+            return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
+
+        } catch (Exception ex) {
+
+            ErrorMessage message = new ErrorMessage();
+            message.setStatus(CODE_SERVER_ERROR);
+            message.setErrorMessageText(MSG_SERVER_ERROR);
+            return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
+
+        }
+    }
+
+    @PutMapping("/changeItemQuantity")
+    ResponseEntity changeOrderItemQuantity(@RequestBody OrderItemDTO orderItemDTO) {
+
+        try {
+            OrderItem order = orderService.changeOrderItemQuantity(orderItemDTO);
+            return new ResponseEntity<>(order, HttpStatus.OK);
+
+        } catch (OrderValidationException ex) {
+            ErrorMessage message = new ErrorMessage();
+            message.setStatus(400);
+            switch (ex.getValidationError()) {
+                case NON_EXISTENT_ITEM_ID:
+                    message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderItemDTO.getItemId());
+                    break;
+                case NON_EXISTENT_ID:
+                    message.setErrorMessageText(ex.getValidationError().getMessage()
+                            + ": order:"
+                            + orderItemDTO.getOrderId()
+                            + "  item:" + orderItemDTO.getItemId());
+                    break;
                 case QUANTITY_LARGER_THAN_AVAILABLE:
                 case INVALID_QUANTITY:
                     message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderItemDTO.getQuantity());
