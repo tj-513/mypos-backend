@@ -32,7 +32,7 @@ class UserValidator {
         }
 
         // check username
-        if (user.getUsername() != null || !user.getUsername().trim().equals("")) {
+        if (user.getUsername() != null && !user.getUsername().trim().equals("")) {
             User existingUser = userRepository.findOneByUsername(user.getUsername());
 
             // again making sure user is not matched with his/herself
@@ -40,7 +40,7 @@ class UserValidator {
                 throw new UserValidationException(UserValidationError.INVALID_USERNAME);
             }
         } else {
-            throw new UserValidationException(UserValidationError.EMPTY_EMAIL);
+            throw new UserValidationException(UserValidationError.INVALID_USERNAME);
         }
 
     }

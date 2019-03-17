@@ -2,6 +2,7 @@ package com.bootcamp.mypos.mypos.api.user;
 
 import com.bootcamp.mypos.mypos.entity.Order;
 import com.bootcamp.mypos.mypos.entity.User;
+import com.bootcamp.mypos.mypos.entity.dto.UserDTO;
 import com.bootcamp.mypos.mypos.exception.UserValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,4 +52,13 @@ class UserService {
     }
 
 
+    public User userLogin(UserDTO userDTO) {
+        User user = userRepository.findOneByUsername(userDTO.getUsername());
+        if(user == null) return null;
+        if( user.getPassword().equals(userDTO.getPassword())){
+            return user;
+        }else{
+            return null;
+        }
+    }
 }

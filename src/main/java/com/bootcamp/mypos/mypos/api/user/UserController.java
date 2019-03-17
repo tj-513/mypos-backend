@@ -17,7 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -72,6 +74,7 @@ class UserController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @PostMapping()
+    @CrossOrigin(origins = "http://localhost:3000")
     ResponseEntity createUser(@RequestBody UserDTO userDTO) {
 
         User user = new ModelMapper().map(userDTO, User.class);
@@ -230,7 +233,16 @@ class UserController {
     ResponseEntity userLogin(@RequestBody UserDTO userDTO) {
 
         try {
-            return new ResponseEntity<>("Success", HttpStatus.OK);
+            User user = userService.userLogin(userDTO);
+
+            if(user != null)
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            else {
+                Map<String,String> map = new HashMap<>();
+                map.put("status", String.valueOf(HttpStatus.UNAUTHORIZED.value()));
+                map.put("message", "Invalid Username or Password");
+                return new ResponseEntity<>(map, HttpStatus.UNAUTHORIZED);
+            }
 
         } catch (Exception ex) {
 
