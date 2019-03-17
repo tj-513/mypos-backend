@@ -2,7 +2,6 @@ package com.bootcamp.mypos.mypos.api.item;
 
 import com.bootcamp.mypos.mypos.entity.Item;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -13,7 +12,6 @@ import org.modelmapper.ModelMapper;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ItemServiceTest {
 

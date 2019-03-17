@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Component
@@ -36,15 +37,26 @@ class OrderService {
     Order createOrder(OrderDTO orderDTO) throws OrderValidationException {
 
         // add to user list here
+
         Order order = new ModelMapper().map(orderDTO, Order.class);
+
+        // by default a created order is open
+        order.setOrderStatus("open");
+        order.setDateCreated(new Date());
+
+
         orderValidator.validateOrder(order, orderRepository);
 
         Optional<User> userOptional = userRepository.findById(orderDTO.getUserId());
 
-        userOptional.ifPresent(user -> userRepository.saveAndFlush(user));
+        if (!userOptional.isPresent()) throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
 
-        return orderRepository.saveAndFlush(order);
+        User user = userOptional.get();
 
+        order = orderRepository.saveAndFlush(order);
+        user.getOrderList().add(order);
+        userRepository.saveAndFlush(user);
+        return order;
     }
 
     Order updateOrder(Order order) throws OrderValidationException {
@@ -80,28 +92,28 @@ class OrderService {
 
         // if the order item already added return the existing item
         Optional<OrderItem> orderItemExisting = orderItemRepository
-                .findById(new CompositeOrderItemId(orderItemDTO.getOrderId(),orderItemDTO.getItemId()));
+                .findById(new CompositeOrderItemId(orderItemDTO.getOrderId(), orderItemDTO.getItemId()));
 
-        if(orderItemExisting.isPresent()){
+        if (orderItemExisting.isPresent()) {
             throw new OrderValidationException(OrderValidationError.ITEM_ALREADY_EXISTS_IN_ORDER);
         }
 
 
         Optional<Order> orderOptional = orderRepository.findById(orderItemDTO.getOrderId());
-        Optional<Item>  itemOptional = itemRepository.findById(orderItemDTO.getItemId());
+        Optional<Item> itemOptional = itemRepository.findById(orderItemDTO.getItemId());
 
-        if(!orderOptional.isPresent())
+        if (!orderOptional.isPresent())
             throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ORDER_ID);
-        if(!itemOptional.isPresent())
+        if (!itemOptional.isPresent())
             throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ITEM_ID);
 
         Item item = itemOptional.get();
         Order order = orderOptional.get();
 
-        if(item.getAmountAvailable() < orderItemDTO.getQuantity())
+        if (item.getAmountAvailable() < orderItemDTO.getQuantity())
             throw new OrderValidationException(OrderValidationError.QUANTITY_LARGER_THAN_AVAILABLE);
 
-        if(orderItemDTO.getQuantity() < 1)
+        if (orderItemDTO.getQuantity() < 1)
             throw new OrderValidationException(OrderValidationError.INVALID_QUANTITY);
 
 
@@ -117,25 +129,25 @@ class OrderService {
     }
 
     OrderItem changeOrderItemQuantity(OrderItemDTO orderItemDTO) throws OrderValidationException {
-        Optional<Item>  itemOptional = itemRepository.findById(orderItemDTO.getItemId());
+        Optional<Item> itemOptional = itemRepository.findById(orderItemDTO.getItemId());
 
         CompositeOrderItemId id = new CompositeOrderItemId(orderItemDTO.getOrderId(), orderItemDTO.getItemId());
 
         Optional<OrderItem> orderItemOptional = orderItemRepository.findById(id);
 
-        if(!itemOptional.isPresent())
+        if (!itemOptional.isPresent())
             throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ITEM_ID);
 
-        if(!orderItemOptional.isPresent())
+        if (!orderItemOptional.isPresent())
             throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
 
         Item item = itemOptional.get();
 
 
-        if(item.getAmountAvailable() < orderItemDTO.getQuantity())
+        if (item.getAmountAvailable() < orderItemDTO.getQuantity())
             throw new OrderValidationException(OrderValidationError.QUANTITY_LARGER_THAN_AVAILABLE);
 
-        if(orderItemDTO.getQuantity() < 1)
+        if (orderItemDTO.getQuantity() < 1)
             throw new OrderValidationException(OrderValidationError.INVALID_QUANTITY);
 
 
@@ -154,7 +166,7 @@ class OrderService {
         Optional<OrderItem> orderItemOptional = orderItemRepository.findById(id);
 
 
-        if(!orderItemOptional.isPresent())
+        if (!orderItemOptional.isPresent())
             throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
 
 
@@ -162,8 +174,8 @@ class OrderService {
 
         Long userId = orderItem.getOrder().getUser().getId();
 
-        if(userId != orderItemDTO.getUserId())
-            throw new OrderValidationException(OrderValidationError.UNAUTHORIZED_USER);
+        if (userId != orderItemDTO.getUserId())
+            throw new OrderValidationException(OrderValidationError.UNAUTHORIZED_USER_DELETE);
 
         return orderItemRepository.saveAndFlush(orderItem);
 

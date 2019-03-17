@@ -286,7 +286,7 @@ class OrderController {
                             + orderItemDTO.getOrderId()
                             + "  item:" + orderItemDTO.getItemId());
                     break;
-                case UNAUTHORIZED_USER:
+                case UNAUTHORIZED_USER_DELETE:
                     message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderItemDTO.getUserId());
                     break;
 
