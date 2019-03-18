@@ -7,6 +7,7 @@ import com.bootcamp.mypos.mypos.exception.UserValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -36,7 +37,9 @@ class UserService {
 
     List<Order> getOrderList(Long userId) throws UserValidationException{
         User user = userValidator.validateId(userId, userRepository);
-        return user.getOrderList();
+        List<Order> orders = user.getOrderList();
+        orders.sort(Comparator.comparing(Order::getDateCreated).reversed());
+        return orders;
     }
 
     User getUser(Long userId) throws UserValidationException{
