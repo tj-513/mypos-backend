@@ -116,6 +116,9 @@ class OrderService {
         if (orderItemDTO.getQuantity() < 1)
             throw new OrderValidationException(OrderValidationError.INVALID_QUANTITY);
 
+//        subtract from all available items
+        item.setAmountAvailable(item.getAmountAvailable()-orderItemDTO.getQuantity());
+
 
         OrderItem orderItem = new OrderItem();
         orderItem.setOrder(order);
@@ -124,6 +127,7 @@ class OrderService {
         orderItem.setOrderId(orderItemDTO.getOrderId());
         orderItem.setItemId(orderItemDTO.getItemId());
 
+        itemRepository.save(item);
         return orderItemRepository.saveAndFlush(orderItem);
 
     }
@@ -142,19 +146,26 @@ class OrderService {
             throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
 
         Item item = itemOptional.get();
+        OrderItem orderItem = orderItemOptional.get();
 
+        int currentlyAvailable = item.getAmountAvailable();
+        int currentlyOrdered = orderItem.getQuantity();
+        int newlyOrdered = orderItemDTO.getQuantity();
 
-        if (item.getAmountAvailable() < orderItemDTO.getQuantity())
-            throw new OrderValidationException(OrderValidationError.QUANTITY_LARGER_THAN_AVAILABLE);
 
         if (orderItemDTO.getQuantity() < 1)
             throw new OrderValidationException(OrderValidationError.INVALID_QUANTITY);
 
+        // whether items would be enough
+        if (currentlyAvailable + currentlyOrdered  < newlyOrdered)
+            throw new OrderValidationException(OrderValidationError.QUANTITY_LARGER_THAN_AVAILABLE);
 
-        OrderItem orderItem = orderItemOptional.get();
+
+        item.setAmountAvailable(currentlyAvailable + currentlyOrdered - newlyOrdered);
+
         orderItem.setQuantity(orderItemDTO.getQuantity());
 
-
+        itemRepository.save(item);
         return orderItemRepository.saveAndFlush(orderItem);
 
     }
@@ -177,7 +188,8 @@ class OrderService {
         if (userId != orderItemDTO.getUserId())
             throw new OrderValidationException(OrderValidationError.UNAUTHORIZED_USER_DELETE);
 
-        return orderItemRepository.saveAndFlush(orderItem);
+        orderItemRepository.delete(orderItem);
+        return orderItem;
 
     }
 }

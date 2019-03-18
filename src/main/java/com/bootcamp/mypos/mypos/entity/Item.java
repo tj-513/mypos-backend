@@ -82,4 +82,17 @@ public class Item {
     public void setUnitPrice(Double unitPrice) {
         this.unitPrice = unitPrice;
     }
+
+    @Override
+    public int hashCode() {
+        return id.intValue();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == null)return false;
+        if(!(o instanceof Item)) return false;
+        return  ((Item)o).id == id;
+
+    }
 }
