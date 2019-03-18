@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 @Component
 class ItemService {
@@ -23,10 +25,10 @@ class ItemService {
 
     }
 
-    Item updateItem(Item item) throws ItemValidationException{
+    Item updateItem(Item item) throws ItemValidationException {
 
         // validate id, validate attributes make update
-        Item existingItem = itemValidator.validateId(item.getId(),itemRepository);
+        Item existingItem = itemValidator.validateId(item.getId(), itemRepository);
         itemValidator.validateItem(item, itemRepository);
 
         existingItem.setAmountAvailable(item.getAmountAvailable());
@@ -36,14 +38,43 @@ class ItemService {
 
     }
 
-    Item getItem(Long itemId) throws ItemValidationException{
+    Item getItem(Long itemId) throws ItemValidationException {
 
         // return if found
         return itemValidator.validateId(itemId, itemRepository);
 
     }
 
-    boolean deleteItem(Long itemId) throws ItemValidationException{
+    List<Item> getMatchingItems(String autoSuggestString) throws ItemValidationException {
+
+        // return if found
+        final List<Item> result = new LinkedList<>();
+
+        Item exact = itemRepository.findOneByItemName(autoSuggestString);
+        List<Item> startingWith = itemRepository.findByItemNameStartingWith(autoSuggestString);
+        List<Item> contains = itemRepository.findByItemNameContaining(autoSuggestString);
+
+        if (exact != null) result.add(exact);
+
+        if (startingWith != null)
+            for (Item item : startingWith) {
+                if (!result.contains(item)) {
+                    result.add(item);
+                }
+            }
+
+        if (contains != null)
+            for (Item item : contains) {
+                if (!result.contains(item)) {
+                    result.add(item);
+                }
+            }
+
+        return result.subList(0, result.size() >5 ? 5: result.size());
+
+    }
+
+    boolean deleteItem(Long itemId) throws ItemValidationException {
 
         // remove if id is valid
         Item found = itemValidator.validateId(itemId, itemRepository);

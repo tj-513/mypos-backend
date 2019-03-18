@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @Api(value="mypos", description="Operations pertaining to Items in System")
@@ -150,7 +152,25 @@ class ItemController {
     }
 
 
+    @ApiOperation(value = "Endpoint for item autosuggestions",response = Item.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved item"),
+            @ApiResponse(code = 400, message = "Bad request")
+    })
+    @GetMapping("/search/{itemName}")
+    ResponseEntity getItemSuggestions(@PathVariable String itemName) {
 
+        try {
+
+            List<Item> items = itemService.getMatchingItems(itemName);
+            return new ResponseEntity<>(items, HttpStatus.OK);
+
+        } catch (Exception e) {
+            ErrorMessage message = new ErrorMessage();
+            message.setStatus(CODE_SERVER_ERROR);
+            return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
+        }
+    }
 
 
     // populates the error message
