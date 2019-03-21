@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -86,10 +87,20 @@ class OrderService {
 
     }
 
+    @Transactional
     Order deleteOrder(Long orderId) throws OrderValidationException {
 
         // remove if id is valid
         Order found = orderValidator.validateId(orderId, orderRepository);
+        List<OrderItem> orderItems  = found.getOrderItems();
+
+        // restore item availability on order delete
+        for(OrderItem orderItem: orderItems){
+            Item item = orderItem.getItem();
+            item.setAmountAvailable(orderItem.getQuantity() + item.getAmountAvailable());
+            itemRepository.save(item);
+        }
+
         orderRepository.delete(found);
         return found;
     }
