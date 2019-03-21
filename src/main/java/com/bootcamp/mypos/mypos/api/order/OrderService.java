@@ -37,7 +37,7 @@ class OrderService {
     private OrderValidator orderValidator = new OrderValidator();
 
     @Transactional
-    Order createOrder(OrderDTO orderDTO) throws OrderValidationException {
+    public Order createOrder(OrderDTO orderDTO) throws OrderValidationException {
 
         // add to user list here
 
@@ -88,7 +88,7 @@ class OrderService {
     }
 
     @Transactional
-    Order deleteOrder(Long orderId) throws OrderValidationException {
+    public Order deleteOrder(Long orderId) throws OrderValidationException {
 
         // remove if id is valid
         Order found = orderValidator.validateId(orderId, orderRepository);
@@ -152,7 +152,7 @@ class OrderService {
     }
 
     @Transactional
-    OrderItem changeOrderItemQuantity(OrderItemDTO orderItemDTO) throws OrderValidationException {
+    public OrderItem changeOrderItemQuantity(OrderItemDTO orderItemDTO) throws OrderValidationException {
         Optional<Item> itemOptional = itemRepository.findById(orderItemDTO.getItemId());
 
         CompositeOrderItemId id = new CompositeOrderItemId(orderItemDTO.getOrderId(), orderItemDTO.getItemId());
@@ -191,7 +191,7 @@ class OrderService {
     }
 
     @Transactional
-    OrderItem deleteOrderItem(OrderItemDTO orderItemDTO) throws OrderValidationException {
+    public OrderItem deleteOrderItem(OrderItemDTO orderItemDTO) throws OrderValidationException {
 
         CompositeOrderItemId id = new CompositeOrderItemId(orderItemDTO.getOrderId(), orderItemDTO.getItemId());
 
