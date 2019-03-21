@@ -14,6 +14,7 @@ import com.bootcamp.mypos.mypos.exception.OrderValidationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Optional;
@@ -34,6 +35,7 @@ class OrderService {
 
     private OrderValidator orderValidator = new OrderValidator();
 
+    @Transactional
     Order createOrder(OrderDTO orderDTO) throws OrderValidationException {
 
         // add to user list here
@@ -65,10 +67,15 @@ class OrderService {
         Order existingOrder = orderValidator.validateId(order.getId(), orderRepository);
         orderValidator.validateOrder(order, orderRepository);
 
+        String orderStatus = order.getOrderStatus();
+        if(!"open".equalsIgnoreCase(orderStatus) && !"closed".equalsIgnoreCase(orderStatus)){
+            throw new OrderValidationException(OrderValidationError.INVALID_ORDER_STATUS);
+        }
+
         existingOrder.setOrderName(order.getOrderName());
         existingOrder.setOrderStatus(order.getOrderStatus());
 
-        return orderRepository.saveAndFlush(order);
+        return orderRepository.saveAndFlush(existingOrder);
 
     }
 
@@ -79,13 +86,14 @@ class OrderService {
 
     }
 
-    boolean deleteOrder(Long orderId) throws OrderValidationException {
+    Order deleteOrder(Long orderId) throws OrderValidationException {
 
         // remove if id is valid
         Order found = orderValidator.validateId(orderId, orderRepository);
         orderRepository.delete(found);
-        return true;
+        return found;
     }
+
 
 
     OrderItem addOrderItem(OrderItemDTO orderItemDTO) throws OrderValidationException {
@@ -132,6 +140,7 @@ class OrderService {
 
     }
 
+    @Transactional
     OrderItem changeOrderItemQuantity(OrderItemDTO orderItemDTO) throws OrderValidationException {
         Optional<Item> itemOptional = itemRepository.findById(orderItemDTO.getItemId());
 
@@ -170,6 +179,7 @@ class OrderService {
 
     }
 
+    @Transactional
     OrderItem deleteOrderItem(OrderItemDTO orderItemDTO) throws OrderValidationException {
 
         CompositeOrderItemId id = new CompositeOrderItemId(orderItemDTO.getOrderId(), orderItemDTO.getItemId());
@@ -182,12 +192,16 @@ class OrderService {
 
 
         OrderItem orderItem = orderItemOptional.get();
+        Item item = itemRepository.getOne(orderItem.getItemId());
 
+        // upon deletion, increment available items count
+        item.setAmountAvailable(orderItem.getQuantity() + item.getAmountAvailable());
         Long userId = orderItem.getOrder().getUser().getId();
 
         if (userId != orderItemDTO.getUserId())
             throw new OrderValidationException(OrderValidationError.UNAUTHORIZED_USER_DELETE);
 
+        itemRepository.save(item);
         orderItemRepository.delete(orderItem);
         return orderItem;
 

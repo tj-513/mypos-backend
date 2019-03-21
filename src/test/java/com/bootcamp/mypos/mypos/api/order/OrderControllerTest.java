@@ -211,7 +211,7 @@ public class OrderControllerTest {
     @Test
     public void deleteOrderSuccessfully() throws Exception {
 
-        Mockito.when(orderService.deleteOrder(Mockito.any())).thenReturn(true);
+        Mockito.when(orderService.deleteOrder(Mockito.any())).thenReturn(new Order());
         Assertions.assertThat(orderController.deleteOrder(Mockito.any()).getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 

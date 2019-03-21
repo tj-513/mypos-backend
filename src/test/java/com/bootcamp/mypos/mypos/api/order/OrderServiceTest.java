@@ -107,7 +107,7 @@ public class OrderServiceTest {
         Optional<Order> optionalOrder = Optional.of(newOrder);
 
         Mockito.when(orderRepository.findById(Mockito.any())).thenReturn(optionalOrder);
-        Assertions.assertThat(orderService.deleteOrder(Mockito.any())).isTrue();
+        Assertions.assertThat(orderService.deleteOrder(Mockito.any())).isNotNull();
     }
 
     @Test
@@ -218,6 +218,7 @@ public class OrderServiceTest {
 
 
         Mockito.when(orderRepository.findById(Mockito.any())).thenReturn(Optional.of(new Order()));
+        Mockito.when(itemRepository.getOne(Mockito.any())).thenReturn(item);
         Mockito.when(orderItemRepository.findById(Mockito.any())).thenReturn(Optional.of(order));
         Mockito.when(orderItemRepository.saveAndFlush(Mockito.any())).thenReturn(order);
         Assertions.assertThat(orderService.deleteOrderItem(newOrder).getItemId()).isEqualTo(10L);
