@@ -45,7 +45,7 @@ class ItemService {
 
     }
 
-    List<Item> getMatchingItems(String autoSuggestString) throws ItemValidationException {
+    List<Item> getMatchingItems(String autoSuggestString) {
 
         // return if found
         final List<Item> result = new LinkedList<>();
