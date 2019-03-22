@@ -373,4 +373,115 @@ public class OrderControllerTest {
     }
 
 
+
+    @Test
+    public void deleteOrderItemReturnsErrorMsgOnServerError() throws Exception {
+        OrderItemDTO dto = new OrderItemDTO();
+        dto.setItemId(100L);
+        dto.setOrderId(40L);
+        dto.setQuantity(1000);
+
+        Mockito.when(orderService.deleteOrderItem(Mockito.any())).thenThrow(new RuntimeException());
+        Assertions.assertThat(orderController.deleteOrderItem(dto).getStatusCode()).isEqualTo(HttpStatus.valueOf(500));
+        Assertions.assertThat(
+                ((ErrorMessage) orderController.deleteOrderItem(dto).getBody())
+                        .getStatus()).isEqualTo(HttpStatus.valueOf(500).value());
+
+    }
+
+
+    @Test
+    public void changeOrderItemQuantitySuccessfully() throws Exception {
+
+        OrderItemDTO orderItemDTO = new OrderItemDTO();
+
+        User u = new User();
+        u.setId(10L);
+
+        OrderItem orderItem = new ModelMapper().map(orderItemDTO, OrderItem.class);
+
+        Mockito.when(orderService.changeOrderItemQuantity(Mockito.any())).thenReturn(orderItem);
+        Assertions.assertThat(orderController.changeOrderItemQuantity(orderItemDTO).getStatusCode()).isEqualTo(HttpStatus.OK);
+
+
+    }
+
+
+    @Test
+    public void changeOrderItemQuantityReturnsErrorMsgOnInvalidId() throws Exception {
+        OrderItemDTO dto = new OrderItemDTO();
+        dto.setItemId(100L);
+        dto.setOrderId(40L);
+
+        OrderValidationException validationException = new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
+        Mockito.when(orderService.changeOrderItemQuantity(Mockito.any())).thenThrow(validationException);
+        Assertions.assertThat(orderController.changeOrderItemQuantity(dto).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
+        Assertions.assertThat(
+                ((ErrorMessage) orderController.changeOrderItemQuantity(dto).getBody())
+                        .getErrorMessageText())
+                .isEqualTo(OrderValidationError.NON_EXISTENT_ID.getMessage()
+                        + String.format(": order:%d  item:%d", dto.getOrderId(), dto.getItemId()));
+        Assertions.assertThat(
+                ((ErrorMessage) orderController.changeOrderItemQuantity(dto).getBody())
+                        .getStatus()).isEqualTo(HttpStatus.valueOf(400).value());
+
+    }
+
+    @Test
+    public void changeOrderItemQuantityReturnsErrorMsgOnInvalidItemId() throws Exception {
+        OrderItemDTO dto = new OrderItemDTO();
+        dto.setItemId(100L);
+        dto.setOrderId(40L);
+
+        OrderValidationException validationException = new OrderValidationException(OrderValidationError.NON_EXISTENT_ITEM_ID);
+        Mockito.when(orderService.changeOrderItemQuantity(Mockito.any())).thenThrow(validationException);
+        Assertions.assertThat(orderController.changeOrderItemQuantity(dto).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
+        Assertions.assertThat(
+                ((ErrorMessage) orderController.changeOrderItemQuantity(dto).getBody())
+                        .getErrorMessageText())
+                .isEqualTo(OrderValidationError.NON_EXISTENT_ITEM_ID.getMessage()
+                        + String.format(": %d", dto.getItemId()));
+        Assertions.assertThat(
+                ((ErrorMessage) orderController.changeOrderItemQuantity(dto).getBody())
+                        .getStatus()).isEqualTo(HttpStatus.valueOf(400).value());
+
+    }
+
+    @Test
+    public void changeOrderItemQuantityReturnsErrorMsgOnInvalidQuantity() throws Exception {
+        OrderItemDTO dto = new OrderItemDTO();
+        dto.setItemId(100L);
+        dto.setOrderId(40L);
+        dto.setQuantity(1000);
+
+        OrderValidationException validationException = new OrderValidationException(OrderValidationError.INVALID_QUANTITY);
+        Mockito.when(orderService.changeOrderItemQuantity(Mockito.any())).thenThrow(validationException);
+        Assertions.assertThat(orderController.changeOrderItemQuantity(dto).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
+        Assertions.assertThat(
+                ((ErrorMessage) orderController.changeOrderItemQuantity(dto).getBody())
+                        .getErrorMessageText())
+                .isEqualTo(OrderValidationError.INVALID_QUANTITY.getMessage()
+                        + String.format(": %d", dto.getQuantity()));
+        Assertions.assertThat(
+                ((ErrorMessage) orderController.changeOrderItemQuantity(dto).getBody())
+                        .getStatus()).isEqualTo(HttpStatus.valueOf(400).value());
+
+    }
+
+
+    @Test
+    public void changeOrderItemQuantityReturnsErrorMsgOnServerError() throws Exception {
+        OrderItemDTO dto = new OrderItemDTO();
+        dto.setItemId(100L);
+        dto.setOrderId(40L);
+        dto.setQuantity(1000);
+
+        Mockito.when(orderService.changeOrderItemQuantity(Mockito.any())).thenThrow(new RuntimeException());
+        Assertions.assertThat(orderController.changeOrderItemQuantity(dto).getStatusCode()).isEqualTo(HttpStatus.valueOf(500));
+        Assertions.assertThat(
+                ((ErrorMessage) orderController.changeOrderItemQuantity(dto).getBody())
+                        .getStatus()).isEqualTo(HttpStatus.valueOf(500).value());
+
+    }
+
 }

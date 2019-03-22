@@ -15,6 +15,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RunWith(MockitoJUnitRunner.class)
 public class ItemControllerTest {
 
@@ -220,4 +223,34 @@ public class ItemControllerTest {
                 ((ErrorMessage) itemController.deleteItem(itemId).getBody())
                         .getStatus()).isEqualTo(HttpStatus.valueOf(500).value());
     }
+
+
+    @Test
+    public void getItemSuggestionsSuccessfully() throws Exception {
+        final String searchString = "appl";
+
+
+        List<Item> items = new ArrayList<>();
+
+
+        Mockito.when(itemService.getMatchingItems(Mockito.any())).thenReturn(items);
+        Assertions.assertThat(itemController.getItemSuggestions(searchString).getStatusCode()).isEqualTo(HttpStatus.valueOf(200));
+
+
+    }
+
+    @Test
+    public void getItemSuggestionsThrowsExceptionOnServerError() throws Exception {
+        final String searchString = "appl";
+
+        Mockito.when(itemService.getMatchingItems(Mockito.any())).thenThrow(new RuntimeException());
+        Assertions.assertThat(itemController.getItemSuggestions(searchString).getStatusCode()).isEqualTo(HttpStatus.valueOf(500));
+
+        Assertions.assertThat(
+                ((ErrorMessage) itemController.getItemSuggestions(searchString).getBody())
+                        .getStatus()).isEqualTo(HttpStatus.valueOf(500).value());
+    }
+
+
+
 }

@@ -78,4 +78,40 @@ public class ItemValidatorTest {
 
     }
 
+    @Test(expected = ItemValidationException.class)
+    public void validateIdThrowsExceptionOnEmptyItemName() throws Exception {
+        Item item = new Item();
+        item.setItemName("");
+        item.setAmountAvailable(-1);
+        item.setId(4L);
+
+        Item returned = new Item();
+        returned.setItemName("apple");
+        returned.setId(5L);
+
+
+        ItemValidator validator = new ItemValidator();
+        Mockito.when(itemRepository.findById(Mockito.any())).thenReturn(Optional.ofNullable(null));
+        validator.validateItem(item,itemRepository);
+
+    }
+
+    @Test(expected = ItemValidationException.class)
+    public void validateIdThrowsExceptionOnInvalidAmountAvailable() throws Exception {
+        Item item = new Item();
+        item.setItemName(null);
+        item.setAmountAvailable(-1);
+        item.setId(4L);
+
+        Item returned = new Item();
+        returned.setItemName("apple");
+        returned.setId(5L);
+
+
+        ItemValidator validator = new ItemValidator();
+        Mockito.when(itemRepository.findById(Mockito.any())).thenReturn(Optional.ofNullable(null));
+        validator.validateItem(item,itemRepository);
+
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.bootcamp.mypos.mypos.api.user;
 
 import com.bootcamp.mypos.mypos.entity.User;
+import com.bootcamp.mypos.mypos.entity.dto.UserDTO;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,6 +105,49 @@ public class UserServiceTest {
 
         Mockito.when(userRepository.findById(Mockito.any())).thenReturn(optionalUser);
         Assertions.assertThat(userService.getOrderList(Mockito.any())).isNotNull();
+    }
+
+    @Test
+    public void userLoginSuccessfully() throws Exception{
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setPassword("somehashedpassword");
+
+
+
+        User user = new ModelMapper().map(userDTO,User.class);
+
+        user.setPassword("somehashedpassword");
+        user.setUsername("jdoe");
+
+        User returnedUser = new ModelMapper().map(user,User.class);
+        returnedUser.setId(10L);
+
+        Mockito.when(userRepository.saveAndFlush(user)).thenReturn(returnedUser);
+        Mockito.when(userRepository.findOneByUsername(Mockito.any())).thenReturn(returnedUser);
+        Assertions.assertThat(userService.userLogin(userDTO).getId()).isEqualTo(10L);
+    }
+
+
+    @Test
+    public void userLoginReturnsNullOnWrongPassword() throws Exception{
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setPassword("not-somehashedpassword");
+
+
+
+        User user = new ModelMapper().map(userDTO,User.class);
+
+        user.setPassword("somehashedpassword");
+        user.setUsername("jdoe");
+
+        User returnedUser = new ModelMapper().map(user,User.class);
+        returnedUser.setId(10L);
+
+        Mockito.when(userRepository.saveAndFlush(user)).thenReturn(returnedUser);
+        Mockito.when(userRepository.findOneByUsername(Mockito.any())).thenReturn(returnedUser);
+        Assertions.assertThat(userService.userLogin(userDTO)).isNull();
     }
 
 }

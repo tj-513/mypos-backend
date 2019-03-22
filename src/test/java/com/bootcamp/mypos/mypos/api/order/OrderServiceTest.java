@@ -18,6 +18,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -98,15 +100,23 @@ public class OrderServiceTest {
         order.setOrderName("some place in colombo");
         order.setOrderStatus("open");
 
+        Item item1 = new Item();
+        item1.setAmountAvailable(100);
 
-        Order newOrder = new ModelMapper().map(order,Order.class);
-        order.setOrderName("some place in colombo");
-        order.setOrderStatus("open");
+        OrderItem orderItem1 = new OrderItem();
+        orderItem1.setQuantity(100);
+        orderItem1.setItem(item1);
+
+        List<OrderItem> items = new ArrayList<>();
+        items.add(orderItem1);
+
+        order.setOrderItems(items);
 
 
-        Optional<Order> optionalOrder = Optional.of(newOrder);
+        Optional<Order> optionalOrder = Optional.of(order);
 
         Mockito.when(orderRepository.findById(Mockito.any())).thenReturn(optionalOrder);
+        Mockito.when(itemRepository.save(Mockito.any())).thenReturn(null);
         Assertions.assertThat(orderService.deleteOrder(Mockito.any())).isNotNull();
     }
 
@@ -223,5 +233,58 @@ public class OrderServiceTest {
         Mockito.when(orderItemRepository.saveAndFlush(Mockito.any())).thenReturn(order);
         Assertions.assertThat(orderService.deleteOrderItem(newOrder).getItemId()).isEqualTo(10L);
         Assertions.assertThat(orderService.deleteOrderItem(newOrder).getOrderId()).isEqualTo(15L);
+    }
+
+    @Test
+    public void changeOrderItemQuantitySuccessfully() throws Exception {
+
+        OrderItemDTO newOrder = new OrderItemDTO();
+        newOrder.setItemId(10L);
+        newOrder.setOrderId(15L);
+        newOrder.setQuantity(5);
+
+        OrderItem found = new ModelMapper().map(newOrder, OrderItem.class);
+
+        Item item = new Item();
+        item.setAmountAvailable(100);
+
+        OrderItem order = new ModelMapper().map(newOrder, OrderItem.class);
+
+        Mockito.when(orderRepository.findById(Mockito.any())).thenReturn(Optional.of(new Order()));
+        Mockito.when(orderRepository.save(Mockito.any())).thenReturn((new Order()));
+        Mockito.when(itemRepository.findById(Mockito.any())).thenReturn(Optional.of(item));
+        Mockito.when(itemRepository.save(Mockito.any())).thenReturn((item));
+        Mockito.when(orderItemRepository.findById(Mockito.any())).thenReturn(Optional.of(found));
+        Mockito.when(orderItemRepository.saveAndFlush(Mockito.any())).thenReturn(order);
+
+        Assertions.assertThat(orderService.changeOrderItemQuantity(newOrder).getItemId()).isEqualTo(10L);
+        Assertions.assertThat(orderService.changeOrderItemQuantity(newOrder).getOrderId()).isEqualTo(15L);
+        Assertions.assertThat(orderService.changeOrderItemQuantity(newOrder).getQuantity()).isEqualTo(5);
+    }
+
+
+    @Test(expected = OrderValidationException.class)
+    public void changeOrderItemQuantityThrowsExceptionOnNonExistentItemId() throws Exception {
+
+        OrderItemDTO newOrder = new OrderItemDTO();
+        newOrder.setItemId(10L);
+        newOrder.setOrderId(15L);
+        newOrder.setQuantity(5);
+
+        OrderItem found = new ModelMapper().map(newOrder, OrderItem.class);
+
+        Item item = new Item();
+        item.setAmountAvailable(100);
+
+        OrderItem order = new ModelMapper().map(newOrder, OrderItem.class);
+
+        Mockito.when(orderRepository.findById(Mockito.any())).thenReturn(Optional.of(new Order()));
+        Mockito.when(orderRepository.save(Mockito.any())).thenReturn((new Order()));
+        Mockito.when(itemRepository.findById(Mockito.any())).thenReturn(Optional.of(item));
+        Mockito.when(itemRepository.save(Mockito.any())).thenReturn((item));
+        Mockito.when(orderItemRepository.findById(Mockito.any())).thenReturn(Optional.ofNullable(null));
+        Mockito.when(orderItemRepository.saveAndFlush(Mockito.any())).thenReturn(order);
+
+        orderService.changeOrderItemQuantity(newOrder);
     }
 }
