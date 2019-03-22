@@ -1,0 +1,211 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: UserService</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.bootcamp.mypos.mypos.api.user</a> ]
+</div>
+
+<h1>Coverage Summary for Class: UserService (com.bootcamp.mypos.mypos.api.user)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (20/ 20)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$120731120</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$120731120$auxiliary$9SAAWzy3</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$120731120$auxiliary$aFEl5y68</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$120731120$auxiliary$evBCVpfh</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$120731120$auxiliary$J0eoCWO9</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$120731120$auxiliary$mStUT3SJ</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$120731120$auxiliary$v0leCFsx</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$120731120$auxiliary$XgqFYVz2</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$120731120$auxiliary$ZAgliECU</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$352344612</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$352344612$auxiliary$77Vc9J6R</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$352344612$auxiliary$eOszu7xL</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$352344612$auxiliary$GT8ppt9S</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$352344612$auxiliary$omcBCuzn</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$352344612$auxiliary$oyfX6AWp</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$352344612$auxiliary$z0q8GEbw</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$352344612$auxiliary$zXRC4syc</td>
+  </tr>
+  <tr>
+    <td class="name">UserService$MockitoMock$352344612$auxiliary$ZZDN4PFZ</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (20/ 20)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.bootcamp.mypos.mypos.api.user;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.bootcamp.mypos.mypos.entity.Order;
+<i>4</i>&nbsp;import com.bootcamp.mypos.mypos.entity.User;
+<i>5</i>&nbsp;import com.bootcamp.mypos.mypos.entity.dto.UserDTO;
+<i>6</i>&nbsp;import com.bootcamp.mypos.mypos.exception.UserValidationException;
+<i>7</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>8</i>&nbsp;import org.springframework.stereotype.Component;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import java.util.Comparator;
+<i>11</i>&nbsp;import java.util.List;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;@Component
+<b class="fc"><i>14</i>&nbsp;class UserService {</b>
+<i>15</i>&nbsp;    @Autowired
+<i>16</i>&nbsp;    private UserRepository userRepository;
+<i>17</i>&nbsp;
+<b class="fc"><i>18</i>&nbsp;    private UserValidator userValidator = new UserValidator();</b>
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    User createUser(User user) throws UserValidationException {
+<i>21</i>&nbsp;
+<b class="fc"><i>22</i>&nbsp;        userValidator.validateUser(user, userRepository);</b>
+<b class="fc"><i>23</i>&nbsp;        return userRepository.saveAndFlush(user);</b>
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    }
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    User updateUser(User user) throws UserValidationException{
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;        // validate id, validate attributes make update
+<b class="fc"><i>30</i>&nbsp;        userValidator.validateId(user.getId(),userRepository);</b>
+<b class="fc"><i>31</i>&nbsp;        userValidator.validateUser(user, userRepository);</b>
+<i>32</i>&nbsp;
+<b class="fc"><i>33</i>&nbsp;        return userRepository.saveAndFlush(user);</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    }
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    List&lt;Order&gt; getOrderList(Long userId) throws UserValidationException{
+<b class="fc"><i>39</i>&nbsp;        User user = userValidator.validateId(userId, userRepository);</b>
+<b class="fc"><i>40</i>&nbsp;        List&lt;Order&gt; orders = user.getOrderList();</b>
+<b class="fc"><i>41</i>&nbsp;        orders.sort(Comparator.comparing(Order::getDateModified).reversed());</b>
+<b class="fc"><i>42</i>&nbsp;        return orders;</b>
+<i>43</i>&nbsp;    }
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    User getUser(Long userId) throws UserValidationException{
+<b class="fc"><i>46</i>&nbsp;        return userValidator.validateId(userId, userRepository);</b>
+<i>47</i>&nbsp;    }
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    boolean deleteUser(Long userId) throws UserValidationException{
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;        // remove if id is valid
+<b class="fc"><i>52</i>&nbsp;        User found = userValidator.validateId(userId, userRepository);</b>
+<b class="fc"><i>53</i>&nbsp;        userRepository.delete(found);</b>
+<b class="fc"><i>54</i>&nbsp;        return true;</b>
+<i>55</i>&nbsp;    }
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    public User userLogin(UserDTO userDTO) {
+<b class="fc"><i>59</i>&nbsp;        User user = userRepository.findOneByUsername(userDTO.getUsername());</b>
+<b class="fc"><i>60</i>&nbsp;        if(user == null) return null;</b>
+<b class="fc"><i>61</i>&nbsp;        if( user.getPassword().equals(userDTO.getPassword())){</b>
+<b class="fc"><i>62</i>&nbsp;            return user;</b>
+<i>63</i>&nbsp;        }else{
+<b class="fc"><i>64</i>&nbsp;            return null;</b>
+<i>65</i>&nbsp;        }
+<i>66</i>&nbsp;    }
+<i>67</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2019-03-22 16:05</div>
+</div>
+</body>
+</html>
