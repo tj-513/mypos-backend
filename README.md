@@ -3,6 +3,7 @@
 This was done as a pet project to learn ReactJs alongside Spring Boot.
 This SpringBoot application serves as the backend for MyPoS Client application.
 
+
 ## API Documentation
 You can find the API Documentation here..
 https://app.swaggerhub.com/apis-docs/tj-at-bootcamp/mypos-api/1.0
