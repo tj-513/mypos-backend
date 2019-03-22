@@ -28,7 +28,9 @@ spring.datasource.password=your_password
 This application will be listening to requests coming at http://localhost:8090 you can change the configurations as necessary.
 The configuration is located in `src/resources/application.properties`.
 
-
+### Check API Availability
+You can check the api availability by requesting the greeting response from the server.
+A GET request at http://localhost:8090/api sends u a greeting message.
 
 ### Build an executable JAR
 You can run the application from the command line using:
