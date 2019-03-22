@@ -123,7 +123,6 @@ public class UserServiceTest {
         User returnedUser = new ModelMapper().map(user,User.class);
         returnedUser.setId(10L);
 
-        Mockito.when(userRepository.saveAndFlush(user)).thenReturn(returnedUser);
         Mockito.when(userRepository.findOneByUsername(Mockito.any())).thenReturn(returnedUser);
         Assertions.assertThat(userService.userLogin(userDTO).getId()).isEqualTo(10L);
     }
@@ -145,7 +144,6 @@ public class UserServiceTest {
         User returnedUser = new ModelMapper().map(user,User.class);
         returnedUser.setId(10L);
 
-        Mockito.when(userRepository.saveAndFlush(user)).thenReturn(returnedUser);
         Mockito.when(userRepository.findOneByUsername(Mockito.any())).thenReturn(returnedUser);
         Assertions.assertThat(userService.userLogin(userDTO)).isNull();
     }
