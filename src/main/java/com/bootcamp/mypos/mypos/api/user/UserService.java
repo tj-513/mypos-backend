@@ -38,7 +38,7 @@ class UserService {
     List<Order> getOrderList(Long userId) throws UserValidationException{
         User user = userValidator.validateId(userId, userRepository);
         List<Order> orders = user.getOrderList();
-        orders.sort(Comparator.comparing(Order::getDateCreated).reversed());
+        orders.sort(Comparator.comparing(Order::getDateModified).reversed());
         return orders;
     }
 

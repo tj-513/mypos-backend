@@ -26,6 +26,9 @@ public class Order {
     @JsonProperty("dateCreated")
     private Date dateCreated;
 
+    @JsonProperty("dateModified")
+    private Date dateModified;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_order_id")
     private User user;
@@ -64,6 +67,14 @@ public class Order {
 
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    public Date getDateModified() {
+        return dateModified;
+    }
+
+    public void setDateModified(Date dateModified) {
+        this.dateModified = dateModified;
     }
 
     @JsonIgnore

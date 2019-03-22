@@ -46,6 +46,7 @@ class OrderService {
         // by default a created order is open
         order.setOrderStatus("open");
         order.setDateCreated(new Date());
+        order.setDateModified(new Date());
 
 
         orderValidator.validateOrder(order, orderRepository);
@@ -69,10 +70,11 @@ class OrderService {
         orderValidator.validateOrder(order, orderRepository);
 
         String orderStatus = order.getOrderStatus();
-        if(!"open".equalsIgnoreCase(orderStatus) && !"closed".equalsIgnoreCase(orderStatus)){
+        if (!"open".equalsIgnoreCase(orderStatus) && !"closed".equalsIgnoreCase(orderStatus)) {
             throw new OrderValidationException(OrderValidationError.INVALID_ORDER_STATUS);
         }
 
+        existingOrder.setDateModified(new Date());
         existingOrder.setOrderName(order.getOrderName());
         existingOrder.setOrderStatus(order.getOrderStatus());
 
@@ -92,10 +94,10 @@ class OrderService {
 
         // remove if id is valid
         Order found = orderValidator.validateId(orderId, orderRepository);
-        List<OrderItem> orderItems  = found.getOrderItems();
+        List<OrderItem> orderItems = found.getOrderItems();
 
         // restore item availability on order delete
-        for(OrderItem orderItem: orderItems){
+        for (OrderItem orderItem : orderItems) {
             Item item = orderItem.getItem();
             item.setAmountAvailable(orderItem.getQuantity() + item.getAmountAvailable());
             itemRepository.save(item);
@@ -106,8 +108,8 @@ class OrderService {
     }
 
 
-
-    OrderItem addOrderItem(OrderItemDTO orderItemDTO) throws OrderValidationException {
+    @Transactional
+    public OrderItem addOrderItem(OrderItemDTO orderItemDTO) throws OrderValidationException {
 
         // if the order item already added return the existing item
         Optional<OrderItem> orderItemExisting = orderItemRepository
@@ -136,7 +138,7 @@ class OrderService {
             throw new OrderValidationException(OrderValidationError.INVALID_QUANTITY);
 
 //        subtract from all available items
-        item.setAmountAvailable(item.getAmountAvailable()-orderItemDTO.getQuantity());
+        item.setAmountAvailable(item.getAmountAvailable() - orderItemDTO.getQuantity());
 
 
         OrderItem orderItem = new OrderItem();
@@ -146,6 +148,9 @@ class OrderService {
         orderItem.setOrderId(orderItemDTO.getOrderId());
         orderItem.setItemId(orderItemDTO.getItemId());
 
+        order.setDateModified(new Date());
+
+        orderRepository.save(order);
         itemRepository.save(item);
         return orderItemRepository.saveAndFlush(orderItem);
 
@@ -177,13 +182,17 @@ class OrderService {
             throw new OrderValidationException(OrderValidationError.INVALID_QUANTITY);
 
         // whether items would be enough
-        if (currentlyAvailable + currentlyOrdered  < newlyOrdered)
+        if (currentlyAvailable + currentlyOrdered < newlyOrdered)
             throw new OrderValidationException(OrderValidationError.QUANTITY_LARGER_THAN_AVAILABLE);
 
 
         item.setAmountAvailable(currentlyAvailable + currentlyOrdered - newlyOrdered);
 
         orderItem.setQuantity(orderItemDTO.getQuantity());
+
+        Order order = orderItem.getOrder();
+        order.setDateModified(new Date());
+        orderRepository.save(order);
 
         itemRepository.save(item);
         return orderItemRepository.saveAndFlush(orderItem);
@@ -211,6 +220,10 @@ class OrderService {
 
         if (userId != orderItemDTO.getUserId())
             throw new OrderValidationException(OrderValidationError.UNAUTHORIZED_USER_DELETE);
+
+        Order order = orderItem.getOrder();
+        order.setDateModified(new Date());
+        orderRepository.save(order);
 
         itemRepository.save(item);
         orderItemRepository.delete(orderItem);
