@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserControllerTest {
@@ -295,4 +296,58 @@ public class UserControllerTest {
                 ((ErrorMessage) userController.getOrderList(userId).getBody())
                         .getStatus()).isEqualTo(HttpStatus.valueOf(500).value());
     }
+
+
+
+    @Test
+    public void loginUserSuccessfully() throws Exception {
+        UserDTO user = new UserDTO();
+
+        user.setPassword("somehashedpassword");
+        user.setUsername("jdoe");
+
+
+        User returnedUser = new ModelMapper().map(user, User.class);
+        returnedUser.setId(10l);
+
+        Mockito.when(userService.userLogin(Mockito.any())).thenReturn(returnedUser);
+        Assertions.assertThat(userController.userLogin(user).getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(((User) userController.userLogin(user).getBody()).getUsername()).isEqualTo("jdoe");
+    }
+
+
+
+    @Test
+    public void loginUserReturnsErrorMsgOnWrongUsername() throws Exception {
+        UserDTO user = new UserDTO();
+
+        user.setPassword("somehashedpassword");
+        user.setUsername("jdoe");
+
+
+        User returnedUser = new ModelMapper().map(user, User.class);
+        returnedUser.setId(10l);
+
+        Mockito.when(userService.userLogin(Mockito.any())).thenReturn(null);
+        Assertions.assertThat(userController.userLogin(user).getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        Assertions.assertThat(((Map<String,String>) userController.userLogin(user).getBody()).get("message")).isEqualTo("Invalid Username or Password");
+    }
+
+
+    @Test
+    public void loginUserReturnsErrorMsgOnServerError() throws Exception {
+        UserDTO user = new UserDTO();
+
+        user.setPassword("somehashedpassword");
+        user.setUsername("jdoe");
+
+
+        User returnedUser = new ModelMapper().map(user, User.class);
+        returnedUser.setId(10l);
+
+        Mockito.when(userService.userLogin(Mockito.any())).thenThrow(new RuntimeException());
+        Assertions.assertThat(userController.userLogin(user).getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        Assertions.assertThat(((ErrorMessage) userController.userLogin(user).getBody()).getStatus()).isEqualTo(500);
+    }
+
 }

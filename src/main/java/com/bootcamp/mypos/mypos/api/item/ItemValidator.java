@@ -11,7 +11,7 @@ class ItemValidator {
     void validateItem(Item item, ItemRepository itemRepository) throws ItemValidationException {
 
         // check itemname
-        if (item.getItemName() != null || !item.getItemName().trim().equals("")) {
+        if (item.getItemName() != null && !item.getItemName().trim().equals("")) {
             Item existingItem = itemRepository.findOneByItemName(item.getItemName());
 
             // again making sure item is not matched with his/herself
