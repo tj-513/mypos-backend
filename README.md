@@ -8,7 +8,7 @@ This SpringBoot application serves as the backend for MyPoS Client application.
 You can find the API Documentation here..
 https://app.swaggerhub.com/apis-docs/tj-at-bootcamp/mypos-api/1.0
 
-##Test Coverage
+## Test Coverage
 You can view the test coverage in ./coverage-report directory.
 
 ### Prerequisites
