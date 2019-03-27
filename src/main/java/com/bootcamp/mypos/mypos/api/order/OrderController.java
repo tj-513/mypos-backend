@@ -32,9 +32,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
+@SuppressWarnings("Duplicates") // uses similar code to handle server errors
 @RestController
-@Api(value="mypos", description="Operations pertaining to Orders in System")
+@Api(value = "mypos", tags = {"Order Controller"})
 @RequestMapping("api/orders")
 class OrderController {
 
@@ -47,7 +47,7 @@ class OrderController {
     private OrderService orderService;
 
 
-    @ApiOperation(value = "View Details about the given order from id",response = Item.class)
+    @ApiOperation(value = "View Details about the given order from id", response = Item.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved order"),
             @ApiResponse(code = 400, message = "Bad request"),
@@ -81,8 +81,7 @@ class OrderController {
     }
 
 
-
-    @ApiOperation(value = "Create a new order",response = Order.class)
+    @ApiOperation(value = "Create a new order", response = Order.class)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successfully created order"),
             @ApiResponse(code = 400, message = "Bad request"),
@@ -110,7 +109,7 @@ class OrderController {
     }
 
 
-    @ApiOperation(value = "Update an order",response = Order.class)
+    @ApiOperation(value = "Update an order", response = Order.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated order"),
             @ApiResponse(code = 400, message = "Bad request"),
@@ -140,7 +139,7 @@ class OrderController {
     }
 
 
-    @ApiOperation(value = "Delete an order",response = Order.class)
+    @ApiOperation(value = "Delete an order", response = Order.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully deleted order"),
             @ApiResponse(code = 400, message = "Bad request"),
@@ -177,8 +176,7 @@ class OrderController {
     }
 
 
-
-    @ApiOperation(value = "Add an order item to an order",response = OrderItem.class)
+    @ApiOperation(value = "Add an order item to an order", response = OrderItem.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully added order item"),
             @ApiResponse(code = 400, message = "Bad request"),
@@ -226,8 +224,7 @@ class OrderController {
     }
 
 
-
-    @ApiOperation(value = "Update order item quantity",response = Order.class)
+    @ApiOperation(value = "Update order item quantity", response = Order.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated order item"),
             @ApiResponse(code = 400, message = "Bad request"),
@@ -275,8 +272,7 @@ class OrderController {
     }
 
 
-
-    @ApiOperation(value = "Delete an order  item",response = Order.class)
+    @ApiOperation(value = "Delete an order  item", response = Order.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully deleted order item"),
             @ApiResponse(code = 400, message = "Bad request"),
@@ -321,8 +317,7 @@ class OrderController {
     }
 
 
-
-    @ApiOperation(value = "Get list of items in an order",response = List.class)
+    @ApiOperation(value = "Get list of items in an order", response = List.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved list"),
             @ApiResponse(code = 400, message = "Bad request"),

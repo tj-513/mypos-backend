@@ -19,7 +19,7 @@ import java.util.List;
 
 
 @RestController
-@Api(value="mypos", description="Operations pertaining to Items in System")
+@Api(value="mypos", tags = {"Item Controller"})
 @RequestMapping("api/items")
 class ItemController {
 

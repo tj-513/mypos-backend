@@ -31,7 +31,7 @@ public class OrderValidatorTest {
         returned.setId(4L);
 
         OrderValidator validator = new OrderValidator();
-        validator.validateOrder(order,orderRepository);
+        validator.validateOrder(order);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class OrderValidatorTest {
         returned.setId(4L);
 
         OrderValidator validator = new OrderValidator();
-        validator.validateOrder(order,orderRepository);
+        validator.validateOrder(order);
         assert true;
     }
 

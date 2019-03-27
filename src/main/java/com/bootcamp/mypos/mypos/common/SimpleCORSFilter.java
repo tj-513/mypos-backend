@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class SimpleCORSFilter implements Filter {
 
+    @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
         HttpServletResponse response = (HttpServletResponse) res;
@@ -36,7 +37,13 @@ public class SimpleCORSFilter implements Filter {
         }
     }
 
-    public void init(FilterConfig filterConfig) {}
+    @Override
+    public void init(FilterConfig filterConfig) {
+        // no special action taken at init
+    }
 
-    public void destroy() {}
+    @Override
+    public void destroy() {
+        // no special action taken at destroy
+    }
 }

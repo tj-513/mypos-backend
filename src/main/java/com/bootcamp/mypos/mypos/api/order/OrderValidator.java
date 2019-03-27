@@ -8,9 +8,9 @@ import java.util.Optional;
 
 class OrderValidator {
 
-    void validateOrder(Order order, OrderRepository orderRepository) throws OrderValidationException {
-        // check email
+    void validateOrder(Order order) throws OrderValidationException {
 
+        // check order status
         String status = order.getOrderStatus();
         if (status != null
                 &&

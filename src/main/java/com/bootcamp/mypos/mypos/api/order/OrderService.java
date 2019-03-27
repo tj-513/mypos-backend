@@ -49,7 +49,7 @@ class OrderService {
         order.setDateModified(new Date());
 
 
-        orderValidator.validateOrder(order, orderRepository);
+        orderValidator.validateOrder(order);
 
         Optional<User> userOptional = userRepository.findById(orderDTO.getUserId());
 
@@ -67,7 +67,7 @@ class OrderService {
 
         // validate id, validate attributes make update
         Order existingOrder = orderValidator.validateId(order.getId(), orderRepository);
-        orderValidator.validateOrder(order, orderRepository);
+        orderValidator.validateOrder(order);
 
         String orderStatus = order.getOrderStatus();
         if (!"open".equalsIgnoreCase(orderStatus) && !"closed".equalsIgnoreCase(orderStatus)) {

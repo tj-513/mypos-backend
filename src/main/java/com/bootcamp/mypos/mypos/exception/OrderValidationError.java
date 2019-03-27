@@ -11,7 +11,8 @@ public enum OrderValidationError {
     ITEM_ALREADY_EXISTS_IN_ORDER("Item already exists in order"),
     UNAUTHORIZED_USER_DELETE("Only the creator of order can remove this order item"),
     INVALID_ORDER_STATUS("Invalid order status provided"),
-    INVALID_USER_ID("Provided user ID does not exist");
+    INVALID_USER_ID("Provided user ID does not exist"),
+    DUPLICATE_ORDER_NAME("Provided Order Name Exists for User");
 
     private final String message;
 

@@ -1,7 +1,6 @@
 package com.bootcamp.mypos.mypos.api.user;
 
 import com.bootcamp.mypos.mypos.entity.ErrorMessage;
-import com.bootcamp.mypos.mypos.entity.Item;
 import com.bootcamp.mypos.mypos.entity.Order;
 import com.bootcamp.mypos.mypos.entity.User;
 import com.bootcamp.mypos.mypos.entity.dto.UserDTO;
@@ -23,7 +22,7 @@ import java.util.Map;
 
 
 @RestController
-@Api(value="mypos", description="Operations pertaining to Users in in System")
+@Api(value="mypos", tags = {"User Controller"})
 @RequestMapping("api/users")
 class UserController {
 
