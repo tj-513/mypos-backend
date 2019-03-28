@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 
+@SuppressWarnings("Duplicates") // uses similar code to handle server errors
 @RestController
 @Api(value="mypos", tags = {"User Controller"})
 @RequestMapping("api/users")
@@ -73,7 +74,6 @@ class UserController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @PostMapping()
-    @CrossOrigin(origins = "http://localhost:3000")
     ResponseEntity createUser(@RequestBody UserDTO userDTO) {
 
         User user = new ModelMapper().map(userDTO, User.class);

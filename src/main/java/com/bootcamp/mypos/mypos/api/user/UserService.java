@@ -5,6 +5,7 @@ import com.bootcamp.mypos.mypos.entity.User;
 import com.bootcamp.mypos.mypos.entity.dto.UserDTO;
 import com.bootcamp.mypos.mypos.exception.UserValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
@@ -20,6 +21,10 @@ class UserService {
     User createUser(User user) throws UserValidationException {
 
         userValidator.validateUser(user, userRepository);
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        user.setPassword(encoder.encode(user.getPassword()));
+
         return userRepository.saveAndFlush(user);
 
     }
@@ -58,7 +63,10 @@ class UserService {
     public User userLogin(UserDTO userDTO) {
         User user = userRepository.findOneByUsername(userDTO.getUsername());
         if(user == null) return null;
-        if( user.getPassword().equals(userDTO.getPassword())){
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        if( encoder.matches(userDTO.getPassword(), user.getPassword())){
             return user;
         }else{
             return null;
