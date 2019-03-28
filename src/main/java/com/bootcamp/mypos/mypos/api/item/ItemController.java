@@ -83,15 +83,15 @@ class ItemController {
             return new ResponseEntity<>(item, HttpStatus.CREATED);
 
         } catch (ValidationException ex) {
-            logger.error(ex.getMessage());
             ErrorMessage message = getErrorMessage(item, ex);
+            logger.error(ex.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception ex) {
-            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
+            logger.error(ex.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
         }
     }
@@ -110,15 +110,15 @@ class ItemController {
             return new ResponseEntity<>(item, HttpStatus.OK);
 
         } catch (ValidationException ex) {
-            logger.error(ex.getMessage());
             ErrorMessage message = getErrorMessage(item, ex);
+            logger.error(ex.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception ex) {
-            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
+            logger.error(ex.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         }
@@ -139,7 +139,6 @@ class ItemController {
             return new ResponseEntity<>(item, HttpStatus.OK);
 
         } catch (ValidationException ex) {
-            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(400);
 
@@ -148,13 +147,14 @@ class ItemController {
             } else {
                 message.setErrorMessageText(ex.getValidationError().getMessage());
             }
+            logger.error(ex.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception ex) {
-            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR + ": " + ex.getMessage());
+            logger.error(ex.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         }
@@ -175,9 +175,9 @@ class ItemController {
             return new ResponseEntity<>(items, HttpStatus.OK);
 
         } catch (Exception e) {
-            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
+            logger.error(e.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
         }
     }

@@ -52,7 +52,6 @@ class UserController {
             return new ResponseEntity<>(user, HttpStatus.OK);
 
         } catch (ValidationException e) {
-            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(400);
 
@@ -61,6 +60,7 @@ class UserController {
             } else {
                 message.setErrorMessageText(e.getValidationError().getMessage());
             }
+            logger.error(e.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception e) {
@@ -86,15 +86,15 @@ class UserController {
             return new ResponseEntity<>(user, HttpStatus.CREATED);
 
         } catch (ValidationException ex) {
-            logger.error(ex.getMessage());
             ErrorMessage message = getErrorMessage(user, ex);
+            logger.error(ex.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception ex) {
-            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
+            logger.error(ex.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
         }
     }
@@ -114,15 +114,15 @@ class UserController {
             return new ResponseEntity<>(user, HttpStatus.OK);
 
         } catch (ValidationException ex) {
-            logger.error(ex.getMessage());
             ErrorMessage message = getErrorMessage(user, ex);
+            logger.error(ex.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception ex) {
-            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
+            logger.error(ex.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         }
@@ -144,7 +144,6 @@ class UserController {
             return new ResponseEntity<>(user, HttpStatus.OK);
 
         } catch (ValidationException ex) {
-            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(400);
 
@@ -153,13 +152,14 @@ class UserController {
             } else {
                 message.setErrorMessageText(ex.getValidationError().getMessage());
             }
+            logger.error(ex.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception ex) {
-            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR + ": " + ex.getMessage());
+            logger.error(ex.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         }
@@ -180,7 +180,6 @@ class UserController {
             return new ResponseEntity<>(orderList, HttpStatus.OK);
 
         } catch (ValidationException e) {
-            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(400);
 
@@ -189,12 +188,13 @@ class UserController {
             } else {
                 message.setErrorMessageText(e.getValidationError().getMessage());
             }
+            logger.error(e.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception e) {
-            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
+            logger.error(e.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
         }
     }
@@ -221,10 +221,10 @@ class UserController {
             }
 
         } catch (Exception ex) {
-            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
+            logger.error(ex.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
         }
     }
