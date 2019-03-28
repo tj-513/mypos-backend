@@ -34,6 +34,7 @@ class UserController {
 
     @Autowired
     private UserService userService;
+
     private Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @ApiOperation(value = "View Details about the given user from id",response = User.class)
@@ -43,7 +44,7 @@ class UserController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @GetMapping("/{userId}")
-    ResponseEntity getUser(@PathVariable Long userId) {
+    public ResponseEntity getUser(@PathVariable Long userId) {
 
         try {
 
@@ -77,7 +78,7 @@ class UserController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @PostMapping()
-    ResponseEntity createUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity createUser(@RequestBody UserDTO userDTO) {
 
         User user = new ModelMapper().map(userDTO, User.class);
         try {
@@ -105,7 +106,7 @@ class UserController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @PutMapping()
-    ResponseEntity updateUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity updateUser(@RequestBody UserDTO userDTO) {
 
         User user = new ModelMapper().map(userDTO, User.class);
         try {
@@ -134,13 +135,13 @@ class UserController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @DeleteMapping("/{userId}")
-    ResponseEntity deleteUser(@PathVariable Long userId) {
+    public ResponseEntity deleteUser(@PathVariable Long userId) {
 
         try {
 
-            userService.deleteUser(userId);
+            User user = userService.deleteUser(userId);
 
-            return new ResponseEntity<>(null, HttpStatus.OK);
+            return new ResponseEntity<>(user, HttpStatus.OK);
 
         } catch (ValidationException ex) {
             logger.error(ex.getMessage());
@@ -171,7 +172,7 @@ class UserController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @GetMapping("/orderlist/{userId}")
-    ResponseEntity getOrderList(@PathVariable Long userId) {
+    public ResponseEntity getOrderList(@PathVariable Long userId) {
 
         try {
 
@@ -205,7 +206,7 @@ class UserController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @PostMapping("/login")
-    ResponseEntity userLogin(@RequestBody UserDTO userDTO) {
+    public ResponseEntity userLogin(@RequestBody UserDTO userDTO) {
 
         try {
             User user = userService.userLogin(userDTO);

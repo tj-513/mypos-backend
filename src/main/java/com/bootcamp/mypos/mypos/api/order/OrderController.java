@@ -44,7 +44,7 @@ class OrderController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @GetMapping("/{orderId}")
-    ResponseEntity getOrder(@PathVariable Long orderId) {
+    public ResponseEntity getOrder(@PathVariable Long orderId) {
 
         try {
 
@@ -79,7 +79,7 @@ class OrderController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @PostMapping()
-    ResponseEntity createOrder(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity createOrder(@RequestBody OrderDTO orderDTO) {
         Order order = null;
         try {
             order = orderService.createOrder(orderDTO);
@@ -107,7 +107,7 @@ class OrderController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @PutMapping()
-    ResponseEntity updateOrder(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity updateOrder(@RequestBody OrderDTO orderDTO) {
 
         Order order = new ModelMapper().map(orderDTO, Order.class);
         try {
@@ -138,7 +138,7 @@ class OrderController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @DeleteMapping("/{orderId}")
-    ResponseEntity deleteOrder(@PathVariable Long orderId) {
+    public ResponseEntity deleteOrder(@PathVariable Long orderId) {
 
         try {
 
@@ -176,7 +176,7 @@ class OrderController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @PutMapping("/addItem")
-    ResponseEntity addItemToOrder(@RequestBody OrderItemDTO orderItemDTO) {
+    public ResponseEntity addItemToOrder(@RequestBody OrderItemDTO orderItemDTO) {
 
         try {
             OrderItem order = orderService.addOrderItem(orderItemDTO);
@@ -225,7 +225,7 @@ class OrderController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @PutMapping("/changeItemQuantity")
-    ResponseEntity changeOrderItemQuantity(@RequestBody OrderItemDTO orderItemDTO) {
+    public ResponseEntity changeOrderItemQuantity(@RequestBody OrderItemDTO orderItemDTO) {
 
         try {
             OrderItem order = orderService.changeOrderItemQuantity(orderItemDTO);
@@ -274,7 +274,7 @@ class OrderController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @DeleteMapping("/deleteOrderItem")
-    ResponseEntity deleteOrderItem(@RequestBody OrderItemDTO orderItemDTO) {
+    public ResponseEntity deleteOrderItem(@RequestBody OrderItemDTO orderItemDTO) {
 
         try {
             OrderItem order = orderService.deleteOrderItem(orderItemDTO);
@@ -320,7 +320,7 @@ class OrderController {
             @ApiResponse(code = 500, message = "Server error")
     })
     @GetMapping("/items/{orderId}")
-    ResponseEntity getOrderItems(@PathVariable Long orderId) {
+    public ResponseEntity getOrderItems(@PathVariable Long orderId) {
 
         try {
 

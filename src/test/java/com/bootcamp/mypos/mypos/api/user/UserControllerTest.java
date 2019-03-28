@@ -224,7 +224,7 @@ public class UserControllerTest {
     @Test
     public void deleteUserSuccessfully() throws Exception {
 
-        Mockito.when(userService.deleteUser(Mockito.any())).thenReturn(true);
+        Mockito.when(userService.deleteUser(Mockito.any())).thenReturn(new User());
         Assertions.assertThat(userController.deleteUser(Mockito.any()).getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 

@@ -1,5 +1,7 @@
 package com.bootcamp.mypos.mypos.exception.validation_errors;
 
-public interface ValidationError {
+import java.io.Serializable;
+
+public interface ValidationError extends Serializable {
     String getMessage();
 }

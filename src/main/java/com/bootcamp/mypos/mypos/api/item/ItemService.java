@@ -73,12 +73,12 @@ class ItemService {
 
     }
 
-    boolean deleteItem(Long itemId) {
+    Item deleteItem(Long itemId) {
 
         // remove if id is valid
         Item found = itemValidator.validateId(itemId, itemRepository);
         itemRepository.delete(found);
-        return true;
+        return found;
     }
 
 

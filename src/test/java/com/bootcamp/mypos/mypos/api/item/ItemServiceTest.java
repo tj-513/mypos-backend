@@ -89,7 +89,7 @@ public class ItemServiceTest {
         Optional<Item> optionalItem = Optional.of(newItem);
 
         Mockito.when(itemRepository.findById(Mockito.any())).thenReturn(optionalItem);
-        Assertions.assertThat(itemService.deleteItem(Mockito.any())).isTrue();
+        Assertions.assertThat(itemService.deleteItem(Mockito.any())).isNotNull();
     }
 
     @Test

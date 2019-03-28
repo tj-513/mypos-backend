@@ -41,7 +41,7 @@ class ItemController {
             @ApiResponse(code = 400, message = "Bad request")
     })
     @GetMapping("/{itemId}")
-    ResponseEntity getItem(@PathVariable Long itemId) {
+    public ResponseEntity getItem(@PathVariable Long itemId) {
 
         try {
 
@@ -75,7 +75,7 @@ class ItemController {
             @ApiResponse(code = 400, message = "Bad request")
     })
     @PostMapping()
-    ResponseEntity createItem(@RequestBody ItemDTO itemDTO) {
+    public ResponseEntity createItem(@RequestBody ItemDTO itemDTO) {
 
         Item item = new ModelMapper().map(itemDTO, Item.class);
         try {
@@ -102,7 +102,7 @@ class ItemController {
             @ApiResponse(code = 400, message = "Bad request")
     })
     @PutMapping()
-    ResponseEntity updateItem(@RequestBody ItemDTO itemDTO) {
+    public ResponseEntity updateItem(@RequestBody ItemDTO itemDTO) {
 
         Item item = new ModelMapper().map(itemDTO, Item.class);
         try {
@@ -130,13 +130,13 @@ class ItemController {
             @ApiResponse(code = 400, message = "Bad request")
     })
     @DeleteMapping("/{itemId}")
-    ResponseEntity deleteItem(@PathVariable Long itemId) {
+    public ResponseEntity deleteItem(@PathVariable Long itemId) {
 
         try {
 
-            itemService.deleteItem(itemId);
+            Item item = itemService.deleteItem(itemId);
 
-            return new ResponseEntity<>(null, HttpStatus.OK);
+            return new ResponseEntity<>(item, HttpStatus.OK);
 
         } catch (ValidationException ex) {
             logger.error(ex.getMessage());
@@ -167,7 +167,7 @@ class ItemController {
             @ApiResponse(code = 400, message = "Bad request")
     })
     @GetMapping("/search/{itemName}")
-    ResponseEntity getItemSuggestions(@PathVariable String itemName) {
+    public ResponseEntity getItemSuggestions(@PathVariable String itemName) {
 
         try {
 

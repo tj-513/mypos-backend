@@ -218,7 +218,8 @@ class OrderService {
         item.setAmountAvailable(orderItem.getQuantity() + item.getAmountAvailable());
         Long userId = orderItem.getOrder().getUser().getId();
 
-        if (userId != orderItemDTO.getUserId())
+        // only created user can delete
+        if (!userId.equals(orderItemDTO.getUserId()))
             throw new ValidationException(OrderValidationError.UNAUTHORIZED_USER_DELETE);
 
         Order order = orderItem.getOrder();

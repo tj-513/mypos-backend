@@ -191,7 +191,7 @@ public class ItemControllerTest {
     @Test
     public void deleteItemSuccessfully() throws Exception {
 
-        Mockito.when(itemService.deleteItem(Mockito.any())).thenReturn(true);
+        Mockito.when(itemService.deleteItem(Mockito.any())).thenReturn(new Item());
         Assertions.assertThat(itemController.deleteItem(Mockito.any()).getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 

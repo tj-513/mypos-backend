@@ -50,12 +50,12 @@ class UserService {
         return userValidator.validateId(userId, userRepository);
     }
 
-    boolean deleteUser(Long userId){
+    User deleteUser(Long userId){
 
         // remove if id is valid
         User found = userValidator.validateId(userId, userRepository);
         userRepository.delete(found);
-        return true;
+        return found;
     }
 
 

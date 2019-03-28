@@ -89,7 +89,7 @@ public class UserServiceTest {
         Optional<User> optionalUser = Optional.of(newUser);
 
         Mockito.when(userRepository.findById(Mockito.any())).thenReturn(optionalUser);
-        Assertions.assertThat(userService.deleteUser(Mockito.any())).isTrue();
+        Assertions.assertThat(userService.deleteUser(Mockito.any())).isNotNull();
     }
 
     @Test
