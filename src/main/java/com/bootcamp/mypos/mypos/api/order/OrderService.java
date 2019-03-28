@@ -9,8 +9,8 @@ import com.bootcamp.mypos.mypos.entity.User;
 import com.bootcamp.mypos.mypos.entity.dto.OrderDTO;
 import com.bootcamp.mypos.mypos.entity.dto.OrderItemDTO;
 import com.bootcamp.mypos.mypos.entity.id.CompositeOrderItemId;
-import com.bootcamp.mypos.mypos.exception.OrderValidationError;
-import com.bootcamp.mypos.mypos.exception.OrderValidationException;
+import com.bootcamp.mypos.mypos.exception.validation_errors.OrderValidationError;
+import com.bootcamp.mypos.mypos.exception.ValidationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,7 +37,7 @@ class OrderService {
     private OrderValidator orderValidator = new OrderValidator();
 
     @Transactional
-    public Order createOrder(OrderDTO orderDTO) throws OrderValidationException {
+    public Order createOrder(OrderDTO orderDTO){
 
         // add to user list here
 
@@ -53,7 +53,7 @@ class OrderService {
 
         Optional<User> userOptional = userRepository.findById(orderDTO.getUserId());
 
-        if (!userOptional.isPresent()) throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
+        if (!userOptional.isPresent()) throw new ValidationException(OrderValidationError.NON_EXISTENT_ID);
 
         User user = userOptional.get();
 
@@ -63,7 +63,7 @@ class OrderService {
         return order;
     }
 
-    Order updateOrder(Order order) throws OrderValidationException {
+    Order updateOrder(Order order){
 
         // validate id, validate attributes make update
         Order existingOrder = orderValidator.validateId(order.getId(), orderRepository);
@@ -71,7 +71,7 @@ class OrderService {
 
         String orderStatus = order.getOrderStatus();
         if (!"open".equalsIgnoreCase(orderStatus) && !"closed".equalsIgnoreCase(orderStatus)) {
-            throw new OrderValidationException(OrderValidationError.INVALID_ORDER_STATUS);
+            throw new ValidationException(OrderValidationError.INVALID_ORDER_STATUS);
         }
 
         existingOrder.setDateModified(new Date());
@@ -82,7 +82,7 @@ class OrderService {
 
     }
 
-    Order getOrder(Long orderId) throws OrderValidationException {
+    Order getOrder(Long orderId) {
 
         // return if found
         return orderValidator.validateId(orderId, orderRepository);
@@ -90,7 +90,7 @@ class OrderService {
     }
 
     @Transactional
-    public Order deleteOrder(Long orderId) throws OrderValidationException {
+    public Order deleteOrder(Long orderId) {
 
         // remove if id is valid
         Order found = orderValidator.validateId(orderId, orderRepository);
@@ -109,14 +109,14 @@ class OrderService {
 
 
     @Transactional
-    public OrderItem addOrderItem(OrderItemDTO orderItemDTO) throws OrderValidationException {
+    public OrderItem addOrderItem(OrderItemDTO orderItemDTO) {
 
         // if the order item already added return the existing item
         Optional<OrderItem> orderItemExisting = orderItemRepository
                 .findById(new CompositeOrderItemId(orderItemDTO.getOrderId(), orderItemDTO.getItemId()));
 
         if (orderItemExisting.isPresent()) {
-            throw new OrderValidationException(OrderValidationError.ITEM_ALREADY_EXISTS_IN_ORDER);
+            throw new ValidationException(OrderValidationError.ITEM_ALREADY_EXISTS_IN_ORDER);
         }
 
 
@@ -124,18 +124,18 @@ class OrderService {
         Optional<Item> itemOptional = itemRepository.findById(orderItemDTO.getItemId());
 
         if (!orderOptional.isPresent())
-            throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ORDER_ID);
+            throw new ValidationException(OrderValidationError.NON_EXISTENT_ORDER_ID);
         if (!itemOptional.isPresent())
-            throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ITEM_ID);
+            throw new ValidationException(OrderValidationError.NON_EXISTENT_ITEM_ID);
 
         Item item = itemOptional.get();
         Order order = orderOptional.get();
 
         if (item.getAmountAvailable() < orderItemDTO.getQuantity())
-            throw new OrderValidationException(OrderValidationError.QUANTITY_LARGER_THAN_AVAILABLE);
+            throw new ValidationException(OrderValidationError.QUANTITY_LARGER_THAN_AVAILABLE);
 
         if (orderItemDTO.getQuantity() < 1)
-            throw new OrderValidationException(OrderValidationError.INVALID_QUANTITY);
+            throw new ValidationException(OrderValidationError.INVALID_QUANTITY);
 
 //        subtract from all available items
         item.setAmountAvailable(item.getAmountAvailable() - orderItemDTO.getQuantity());
@@ -157,7 +157,7 @@ class OrderService {
     }
 
     @Transactional
-    public OrderItem changeOrderItemQuantity(OrderItemDTO orderItemDTO) throws OrderValidationException {
+    public OrderItem changeOrderItemQuantity(OrderItemDTO orderItemDTO) {
         Optional<Item> itemOptional = itemRepository.findById(orderItemDTO.getItemId());
 
         CompositeOrderItemId id = new CompositeOrderItemId(orderItemDTO.getOrderId(), orderItemDTO.getItemId());
@@ -165,10 +165,10 @@ class OrderService {
         Optional<OrderItem> orderItemOptional = orderItemRepository.findById(id);
 
         if (!itemOptional.isPresent())
-            throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ITEM_ID);
+            throw new ValidationException(OrderValidationError.NON_EXISTENT_ITEM_ID);
 
         if (!orderItemOptional.isPresent())
-            throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
+            throw new ValidationException(OrderValidationError.NON_EXISTENT_ID);
 
         Item item = itemOptional.get();
         OrderItem orderItem = orderItemOptional.get();
@@ -179,11 +179,11 @@ class OrderService {
 
 
         if (orderItemDTO.getQuantity() < 1)
-            throw new OrderValidationException(OrderValidationError.INVALID_QUANTITY);
+            throw new ValidationException(OrderValidationError.INVALID_QUANTITY);
 
         // whether items would be enough
         if (currentlyAvailable + currentlyOrdered < newlyOrdered)
-            throw new OrderValidationException(OrderValidationError.QUANTITY_LARGER_THAN_AVAILABLE);
+            throw new ValidationException(OrderValidationError.QUANTITY_LARGER_THAN_AVAILABLE);
 
 
         item.setAmountAvailable(currentlyAvailable + currentlyOrdered - newlyOrdered);
@@ -200,7 +200,7 @@ class OrderService {
     }
 
     @Transactional
-    public OrderItem deleteOrderItem(OrderItemDTO orderItemDTO) throws OrderValidationException {
+    public OrderItem deleteOrderItem(OrderItemDTO orderItemDTO) {
 
         CompositeOrderItemId id = new CompositeOrderItemId(orderItemDTO.getOrderId(), orderItemDTO.getItemId());
 
@@ -208,7 +208,7 @@ class OrderService {
 
 
         if (!orderItemOptional.isPresent())
-            throw new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
+            throw new ValidationException(OrderValidationError.NON_EXISTENT_ID);
 
 
         OrderItem orderItem = orderItemOptional.get();
@@ -219,7 +219,7 @@ class OrderService {
         Long userId = orderItem.getOrder().getUser().getId();
 
         if (userId != orderItemDTO.getUserId())
-            throw new OrderValidationException(OrderValidationError.UNAUTHORIZED_USER_DELETE);
+            throw new ValidationException(OrderValidationError.UNAUTHORIZED_USER_DELETE);
 
         Order order = orderItem.getOrder();
         order.setDateModified(new Date());

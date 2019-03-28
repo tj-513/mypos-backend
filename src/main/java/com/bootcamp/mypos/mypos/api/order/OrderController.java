@@ -1,23 +1,13 @@
 package com.bootcamp.mypos.mypos.api.order;
-
-/*
- *  create order
- *  delete order
- *  edit order
- *  add item
- *  remove item
- *  get all orders
- * */
-
-
 import com.bootcamp.mypos.mypos.entity.ErrorMessage;
 import com.bootcamp.mypos.mypos.entity.Item;
 import com.bootcamp.mypos.mypos.entity.Order;
 import com.bootcamp.mypos.mypos.entity.OrderItem;
 import com.bootcamp.mypos.mypos.entity.dto.OrderDTO;
 import com.bootcamp.mypos.mypos.entity.dto.OrderItemDTO;
-import com.bootcamp.mypos.mypos.exception.OrderValidationError;
-import com.bootcamp.mypos.mypos.exception.OrderValidationException;
+import com.bootcamp.mypos.mypos.exception.validation_errors.OrderValidationError;
+import com.bootcamp.mypos.mypos.exception.validation_errors.ValidationError;
+import com.bootcamp.mypos.mypos.exception.ValidationException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -32,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@SuppressWarnings("Duplicates") // uses similar code to handle server errors
+@SuppressWarnings("Duplicates") // uses similar code to handle server validation_errors
 @RestController
 @Api(value = "mypos", tags = {"Order Controller"})
 @RequestMapping("api/orders")
@@ -41,7 +31,7 @@ class OrderController {
     private static final String MSG_SERVER_ERROR = "Server Error Occurred";
     private static final int CODE_SERVER_ERROR = 500;
 
-    Logger logger = LoggerFactory.getLogger(OrderController.class);
+    private Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     @Autowired
     private OrderService orderService;
@@ -61,8 +51,8 @@ class OrderController {
             Order order = orderService.getOrder(orderId);
             return new ResponseEntity<>(order, HttpStatus.OK);
 
-        } catch (OrderValidationException e) {
-
+        } catch (ValidationException e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(400);
 
@@ -74,6 +64,7 @@ class OrderController {
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
@@ -94,13 +85,13 @@ class OrderController {
             order = orderService.createOrder(orderDTO);
             return new ResponseEntity<>(order, HttpStatus.CREATED);
 
-        } catch (OrderValidationException ex) {
-
-            ErrorMessage message = getErrorMessage(orderDTO, ex);
+        } catch (ValidationException e) {
+            logger.error(e.getMessage());
+            ErrorMessage message = getErrorMessage(orderDTO, e);
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
-        } catch (Exception ex) {
-
+        } catch (Exception e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
@@ -123,16 +114,17 @@ class OrderController {
             order = orderService.updateOrder(order);
             return new ResponseEntity<>(order, HttpStatus.OK);
 
-        } catch (OrderValidationException ex) {
-            ErrorMessage message = getErrorMessage(orderDTO, ex);
+        } catch (ValidationException e) {
+            logger.error(e.getMessage());
+            ErrorMessage message = getErrorMessage(orderDTO, e);
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
-        } catch (Exception ex) {
-
+        } catch (Exception e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
-            logger.error(ex.getMessage());
+            logger.error(e.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         }
@@ -154,22 +146,23 @@ class OrderController {
 
             return new ResponseEntity<>(order, HttpStatus.OK);
 
-        } catch (OrderValidationException ex) {
+        } catch (ValidationException e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(400);
 
-            if (ex.getValidationError() == OrderValidationError.NON_EXISTENT_ID) {
-                message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderId);
+            if (e.getValidationError() == OrderValidationError.NON_EXISTENT_ID) {
+                message.setErrorMessageText(e.getValidationError().getMessage() + ": " + orderId);
             } else {
-                message.setErrorMessageText(ex.getValidationError().getMessage());
+                message.setErrorMessageText(e.getValidationError().getMessage());
             }
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
-        } catch (Exception ex) {
-
+        } catch (Exception e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
-            message.setErrorMessageText(MSG_SERVER_ERROR + ": " + ex.getMessage());
+            message.setErrorMessageText(MSG_SERVER_ERROR + ": " + e.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         }
@@ -189,22 +182,23 @@ class OrderController {
             OrderItem order = orderService.addOrderItem(orderItemDTO);
             return new ResponseEntity<>(order, HttpStatus.OK);
 
-        } catch (OrderValidationException ex) {
+        } catch (ValidationException e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(400);
-            switch (ex.getValidationError()) {
+            switch ((OrderValidationError)e.getValidationError()) {
                 case NON_EXISTENT_ITEM_ID:
-                    message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderItemDTO.getItemId());
+                    message.setErrorMessageText(e.getValidationError().getMessage() + ": " + orderItemDTO.getItemId());
                     break;
                 case NON_EXISTENT_ORDER_ID:
-                    message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderItemDTO.getOrderId());
+                    message.setErrorMessageText(e.getValidationError().getMessage() + ": " + orderItemDTO.getOrderId());
                     break;
                 case ITEM_ALREADY_EXISTS_IN_ORDER:
-                    message.setErrorMessageText(ex.getValidationError().getMessage());
+                    message.setErrorMessageText(e.getValidationError().getMessage());
                     break;
                 case QUANTITY_LARGER_THAN_AVAILABLE:
                 case INVALID_QUANTITY:
-                    message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderItemDTO.getQuantity());
+                    message.setErrorMessageText(e.getValidationError().getMessage() + ": " + orderItemDTO.getQuantity());
                     break;
 
                 default:
@@ -213,8 +207,8 @@ class OrderController {
 
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
-        } catch (Exception ex) {
-
+        } catch (Exception e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
@@ -237,22 +231,23 @@ class OrderController {
             OrderItem order = orderService.changeOrderItemQuantity(orderItemDTO);
             return new ResponseEntity<>(order, HttpStatus.OK);
 
-        } catch (OrderValidationException ex) {
+        } catch (ValidationException e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(400);
-            switch (ex.getValidationError()) {
+            switch ((OrderValidationError)e.getValidationError()) {
                 case NON_EXISTENT_ITEM_ID:
-                    message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderItemDTO.getItemId());
+                    message.setErrorMessageText(e.getValidationError().getMessage() + ": " + orderItemDTO.getItemId());
                     break;
                 case NON_EXISTENT_ID:
-                    message.setErrorMessageText(ex.getValidationError().getMessage()
+                    message.setErrorMessageText(e.getValidationError().getMessage()
                             + ": order:"
                             + orderItemDTO.getOrderId()
                             + "  item:" + orderItemDTO.getItemId());
                     break;
                 case QUANTITY_LARGER_THAN_AVAILABLE:
                 case INVALID_QUANTITY:
-                    message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderItemDTO.getQuantity());
+                    message.setErrorMessageText(e.getValidationError().getMessage() + ": " + orderItemDTO.getQuantity());
                     break;
 
                 default:
@@ -261,8 +256,8 @@ class OrderController {
 
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
-        } catch (Exception ex) {
-
+        } catch (Exception e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
@@ -285,19 +280,20 @@ class OrderController {
             OrderItem order = orderService.deleteOrderItem(orderItemDTO);
             return new ResponseEntity<>(order, HttpStatus.OK);
 
-        } catch (OrderValidationException ex) {
+        } catch (ValidationException e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(400);
-            switch (ex.getValidationError()) {
+            switch ((OrderValidationError)e.getValidationError()) {
 
                 case NON_EXISTENT_ID:
-                    message.setErrorMessageText(ex.getValidationError().getMessage()
+                    message.setErrorMessageText(e.getValidationError().getMessage()
                             + ": order:"
                             + orderItemDTO.getOrderId()
                             + "  item:" + orderItemDTO.getItemId());
                     break;
                 case UNAUTHORIZED_USER_DELETE:
-                    message.setErrorMessageText(ex.getValidationError().getMessage() + ": " + orderItemDTO.getUserId());
+                    message.setErrorMessageText(e.getValidationError().getMessage() + ": " + orderItemDTO.getUserId());
                     break;
 
                 default:
@@ -306,8 +302,8 @@ class OrderController {
 
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
-        } catch (Exception ex) {
-
+        } catch (Exception e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
@@ -331,8 +327,8 @@ class OrderController {
             Order order = orderService.getOrder(orderId);
             return new ResponseEntity<>(order.getOrderItems(), HttpStatus.OK);
 
-        } catch (OrderValidationException e) {
-
+        } catch (ValidationException e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(400);
 
@@ -344,6 +340,7 @@ class OrderController {
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
 
@@ -352,10 +349,10 @@ class OrderController {
     }
 
     // populates the error message
-    private ErrorMessage getErrorMessage(OrderDTO order, OrderValidationException ex) {
+    private ErrorMessage getErrorMessage(OrderDTO order, ValidationException ex) {
         ErrorMessage message = new ErrorMessage();
 
-        OrderValidationError validationError = ex.getValidationError();
+        ValidationError validationError = ex.getValidationError();
         if (validationError == OrderValidationError.NON_EXISTENT_ID) {
             message.setErrorMessageText(validationError.getMessage() + ": " + order.getId());
         } else {

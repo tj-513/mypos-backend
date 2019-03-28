@@ -8,7 +8,7 @@ import com.bootcamp.mypos.mypos.entity.OrderItem;
 import com.bootcamp.mypos.mypos.entity.User;
 import com.bootcamp.mypos.mypos.entity.dto.OrderDTO;
 import com.bootcamp.mypos.mypos.entity.dto.OrderItemDTO;
-import com.bootcamp.mypos.mypos.exception.OrderValidationException;
+import com.bootcamp.mypos.mypos.exception.ValidationException;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -140,7 +140,7 @@ public class OrderServiceTest {
         Assertions.assertThat(orderService.addOrderItem(newOrder).getOrderId()).isEqualTo(15L);
     }
 
-    @Test(expected = OrderValidationException.class)
+    @Test(expected = ValidationException.class)
     public void throwExceptionOnInvalidOrderId() throws Exception {
 
         OrderItemDTO newOrder = new OrderItemDTO();
@@ -156,7 +156,7 @@ public class OrderServiceTest {
         Assertions.assertThat(orderService.addOrderItem(newOrder).getOrderId()).isEqualTo(15L);
     }
 
-    @Test(expected = OrderValidationException.class)
+    @Test(expected = ValidationException.class)
     public void throwExceptionOnInvaliItemId() throws Exception {
 
         OrderItemDTO newOrder = new OrderItemDTO();
@@ -172,7 +172,7 @@ public class OrderServiceTest {
         Assertions.assertThat(orderService.addOrderItem(newOrder).getOrderId()).isEqualTo(15L);
     }
 
-    @Test(expected = OrderValidationException.class)
+    @Test(expected = ValidationException.class)
     public void throwExceptionOnInvaliQuantity() throws Exception {
 
         OrderItemDTO newOrder = new OrderItemDTO();
@@ -192,7 +192,7 @@ public class OrderServiceTest {
         orderService.addOrderItem(newOrder);
     }
 
-    @Test(expected = OrderValidationException.class)
+    @Test(expected = ValidationException.class)
     public void throwExceptionOnNegativeQuantity() throws Exception {
 
         OrderItemDTO newOrder = new OrderItemDTO();
@@ -263,7 +263,7 @@ public class OrderServiceTest {
     }
 
 
-    @Test(expected = OrderValidationException.class)
+    @Test(expected = ValidationException.class)
     public void changeOrderItemQuantityThrowsExceptionOnNonExistentItemId() throws Exception {
 
         OrderItemDTO newOrder = new OrderItemDTO();

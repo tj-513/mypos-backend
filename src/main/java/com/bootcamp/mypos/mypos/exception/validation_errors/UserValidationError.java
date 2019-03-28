@@ -1,6 +1,6 @@
-package com.bootcamp.mypos.mypos.exception;
+package com.bootcamp.mypos.mypos.exception.validation_errors;
 
-public enum UserValidationError {
+public enum UserValidationError implements ValidationError{
 
     EMPTY_EMAIL("Provided email is empty"),
     INVALID_EMAIL("Invalid email provided by user"),

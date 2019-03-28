@@ -3,7 +3,6 @@ package com.bootcamp.mypos.mypos.api.user;
 import com.bootcamp.mypos.mypos.entity.Order;
 import com.bootcamp.mypos.mypos.entity.User;
 import com.bootcamp.mypos.mypos.entity.dto.UserDTO;
-import com.bootcamp.mypos.mypos.exception.UserValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -18,7 +17,7 @@ class UserService {
 
     private UserValidator userValidator = new UserValidator();
 
-    User createUser(User user) throws UserValidationException {
+    User createUser(User user) {
 
         userValidator.validateUser(user, userRepository);
 
@@ -29,7 +28,7 @@ class UserService {
 
     }
 
-    User updateUser(User user) throws UserValidationException{
+    User updateUser(User user){
 
         // validate id, validate attributes make update
         userValidator.validateId(user.getId(),userRepository);
@@ -40,18 +39,18 @@ class UserService {
     }
 
 
-    List<Order> getOrderList(Long userId) throws UserValidationException{
+    List<Order> getOrderList(Long userId){
         User user = userValidator.validateId(userId, userRepository);
         List<Order> orders = user.getOrderList();
         orders.sort(Comparator.comparing(Order::getDateModified).reversed());
         return orders;
     }
 
-    User getUser(Long userId) throws UserValidationException{
+    User getUser(Long userId){
         return userValidator.validateId(userId, userRepository);
     }
 
-    boolean deleteUser(Long userId) throws UserValidationException{
+    boolean deleteUser(Long userId){
 
         // remove if id is valid
         User found = userValidator.validateId(userId, userRepository);

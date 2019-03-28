@@ -2,7 +2,6 @@ package com.bootcamp.mypos.mypos.api.item;
 
 
 import com.bootcamp.mypos.mypos.entity.Item;
-import com.bootcamp.mypos.mypos.exception.ItemValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +16,7 @@ class ItemService {
 
     private ItemValidator itemValidator = new ItemValidator();
 
-    Item createItem(Item item) throws ItemValidationException {
+    Item createItem(Item item) {
 
         itemValidator.validateItem(item, itemRepository);
         item.setDateAdded(new Date());
@@ -25,7 +24,7 @@ class ItemService {
 
     }
 
-    Item updateItem(Item item) throws ItemValidationException {
+    Item updateItem(Item item){
 
         // validate id, validate attributes make update
         Item existingItem = itemValidator.validateId(item.getId(), itemRepository);
@@ -38,7 +37,7 @@ class ItemService {
 
     }
 
-    Item getItem(Long itemId) throws ItemValidationException {
+    Item getItem(Long itemId){
 
         // return if found
         return itemValidator.validateId(itemId, itemRepository);
@@ -74,7 +73,7 @@ class ItemService {
 
     }
 
-    boolean deleteItem(Long itemId) throws ItemValidationException {
+    boolean deleteItem(Long itemId) {
 
         // remove if id is valid
         Item found = itemValidator.validateId(itemId, itemRepository);

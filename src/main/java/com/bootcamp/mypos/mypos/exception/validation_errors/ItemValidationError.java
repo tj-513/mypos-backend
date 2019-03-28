@@ -1,6 +1,6 @@
-package com.bootcamp.mypos.mypos.exception;
+package com.bootcamp.mypos.mypos.exception.validation_errors;
 
-public enum ItemValidationError {
+public enum ItemValidationError implements ValidationError {
 
     NON_EXISTENT_ID("Provided Item Id doesn't exist"),
     ITEM_NAME_EXISTS("An item with the same name exists"),

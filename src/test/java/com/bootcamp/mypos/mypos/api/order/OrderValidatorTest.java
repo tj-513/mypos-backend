@@ -1,15 +1,12 @@
 package com.bootcamp.mypos.mypos.api.order;
 
 import com.bootcamp.mypos.mypos.entity.Order;
-import com.bootcamp.mypos.mypos.exception.OrderValidationException;
-import org.junit.Before;
+import com.bootcamp.mypos.mypos.exception.ValidationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class OrderValidatorTest {
 
@@ -19,7 +16,7 @@ public class OrderValidatorTest {
 
 
 
-    @Test (expected = OrderValidationException.class)
+    @Test (expected = ValidationException.class)
     public void validateOrderThrowsExceptionOnInvalidStatel() throws Exception  {
 
 

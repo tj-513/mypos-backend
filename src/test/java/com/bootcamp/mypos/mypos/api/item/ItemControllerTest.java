@@ -3,8 +3,8 @@ package com.bootcamp.mypos.mypos.api.item;
 import com.bootcamp.mypos.mypos.entity.ErrorMessage;
 import com.bootcamp.mypos.mypos.entity.Item;
 import com.bootcamp.mypos.mypos.entity.dto.ItemDTO;
-import com.bootcamp.mypos.mypos.exception.ItemValidationError;
-import com.bootcamp.mypos.mypos.exception.ItemValidationException;
+import com.bootcamp.mypos.mypos.exception.validation_errors.ItemValidationError;
+import com.bootcamp.mypos.mypos.exception.ValidationException;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +39,7 @@ public class ItemControllerTest {
     public void getItemReturnsErrorMsgOnInvalidId() throws Exception {
         final Long itemId = 100L;
 
-        ItemValidationException validationException = new ItemValidationException(ItemValidationError.NON_EXISTENT_ID);
+        ValidationException validationException = new ValidationException(ItemValidationError.NON_EXISTENT_ID);
         Mockito.when(itemService.getItem(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(itemController.getItem(itemId).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
         Assertions.assertThat(
@@ -90,7 +90,7 @@ public class ItemControllerTest {
         Item returnedItem = new ModelMapper().map(item, Item.class);
         returnedItem.setId(10l);
 
-        ItemValidationException validationException = new ItemValidationException(ItemValidationError.ITEM_NAME_EXISTS);
+        ValidationException validationException = new ValidationException(ItemValidationError.ITEM_NAME_EXISTS);
 
         Mockito.when(itemService.createItem(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(itemController.createItem(item).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
@@ -153,7 +153,7 @@ public class ItemControllerTest {
         Item returnedItem = new ModelMapper().map(item, Item.class);
         returnedItem.setId(10l);
 
-        ItemValidationException validationException = new ItemValidationException(ItemValidationError.NON_EXISTENT_ID);
+        ValidationException validationException = new ValidationException(ItemValidationError.NON_EXISTENT_ID);
 
         Mockito.when(itemService.updateItem(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(itemController.updateItem(item).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
@@ -199,7 +199,7 @@ public class ItemControllerTest {
     public void deleteItemReturnsErrorMsgOnInvalidId() throws Exception {
         final Long itemId = 100L;
 
-        ItemValidationException validationException = new ItemValidationException(ItemValidationError.NON_EXISTENT_ID);
+        ValidationException validationException = new ValidationException(ItemValidationError.NON_EXISTENT_ID);
         Mockito.when(itemService.deleteItem(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(itemController.deleteItem(itemId).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
         Assertions.assertThat(

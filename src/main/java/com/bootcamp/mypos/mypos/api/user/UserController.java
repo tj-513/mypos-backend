@@ -4,13 +4,15 @@ import com.bootcamp.mypos.mypos.entity.ErrorMessage;
 import com.bootcamp.mypos.mypos.entity.Order;
 import com.bootcamp.mypos.mypos.entity.User;
 import com.bootcamp.mypos.mypos.entity.dto.UserDTO;
-import com.bootcamp.mypos.mypos.exception.UserValidationError;
-import com.bootcamp.mypos.mypos.exception.UserValidationException;
+import com.bootcamp.mypos.mypos.exception.validation_errors.UserValidationError;
+import com.bootcamp.mypos.mypos.exception.ValidationException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 
-@SuppressWarnings("Duplicates") // uses similar code to handle server errors
+@SuppressWarnings("Duplicates") // uses similar code to handle server validation_errors
 @RestController
 @Api(value="mypos", tags = {"User Controller"})
 @RequestMapping("api/users")
@@ -32,7 +34,7 @@ class UserController {
 
     @Autowired
     private UserService userService;
-
+    private Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @ApiOperation(value = "View Details about the given user from id",response = User.class)
     @ApiResponses(value = {
@@ -48,8 +50,8 @@ class UserController {
             User user = userService.getUser(userId);
             return new ResponseEntity<>(user, HttpStatus.OK);
 
-        } catch (UserValidationException e) {
-
+        } catch (ValidationException e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(400);
 
@@ -61,6 +63,7 @@ class UserController {
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
@@ -81,13 +84,13 @@ class UserController {
             user = userService.createUser(user);
             return new ResponseEntity<>(user, HttpStatus.CREATED);
 
-        } catch (UserValidationException ex) {
-
+        } catch (ValidationException ex) {
+            logger.error(ex.getMessage());
             ErrorMessage message = getErrorMessage(user, ex);
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception ex) {
-
+            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
@@ -109,12 +112,13 @@ class UserController {
             user = userService.updateUser(user);
             return new ResponseEntity<>(user, HttpStatus.OK);
 
-        } catch (UserValidationException ex) {
+        } catch (ValidationException ex) {
+            logger.error(ex.getMessage());
             ErrorMessage message = getErrorMessage(user, ex);
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception ex) {
-
+            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
@@ -138,7 +142,8 @@ class UserController {
 
             return new ResponseEntity<>(null, HttpStatus.OK);
 
-        } catch (UserValidationException ex) {
+        } catch (ValidationException ex) {
+            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(400);
 
@@ -150,7 +155,7 @@ class UserController {
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception ex) {
-
+            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR + ": " + ex.getMessage());
@@ -173,8 +178,8 @@ class UserController {
             List<Order> orderList = userService.getOrderList(userId);
             return new ResponseEntity<>(orderList, HttpStatus.OK);
 
-        } catch (UserValidationException e) {
-
+        } catch (ValidationException e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(400);
 
@@ -186,40 +191,11 @@ class UserController {
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
         }
-    }
-
-
-
-    // populates the error message
-    private ErrorMessage getErrorMessage(User user, UserValidationException ex) {
-        ErrorMessage message = new ErrorMessage();
-
-        UserValidationError validationError = ex.getValidationError();
-        switch (validationError) {
-            case DUPLICATE_EMAIL:
-            case INVALID_EMAIL:
-            case EMPTY_EMAIL:
-                message.setErrorMessageText(validationError.getMessage() + ": " + user.getEmail());
-                break;
-
-            case DUPLICATE_USERNAME:
-            case INVALID_USERNAME:
-                message.setErrorMessageText(validationError.getMessage() + ": " + user.getUsername());
-                break;
-            case NON_EXISTENT_ID:
-                message.setErrorMessageText(validationError.getMessage() + ": " + user.getId());
-                break;
-            default:
-                message.setErrorMessageText(validationError.getMessage());
-
-        }
-
-        message.setStatus(400);
-        return message;
     }
 
     @ApiOperation(value = "User Login",response = User.class)
@@ -244,12 +220,42 @@ class UserController {
             }
 
         } catch (Exception ex) {
-
+            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
         }
     }
+
+    // populates the error message
+    private ErrorMessage getErrorMessage(User user, ValidationException ex) {
+        ErrorMessage message = new ErrorMessage();
+
+        UserValidationError validationError =(UserValidationError) ex.getValidationError();
+        switch (validationError) {
+            case DUPLICATE_EMAIL:
+            case INVALID_EMAIL:
+            case EMPTY_EMAIL:
+                message.setErrorMessageText(validationError.getMessage() + ": " + user.getEmail());
+                break;
+
+            case DUPLICATE_USERNAME:
+            case INVALID_USERNAME:
+                message.setErrorMessageText(validationError.getMessage() + ": " + user.getUsername());
+                break;
+            case NON_EXISTENT_ID:
+                message.setErrorMessageText(validationError.getMessage() + ": " + user.getId());
+                break;
+            default:
+                message.setErrorMessageText(validationError.getMessage());
+
+        }
+
+        message.setStatus(400);
+        return message;
+    }
+
+
 
 }

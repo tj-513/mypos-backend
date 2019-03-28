@@ -3,8 +3,9 @@ package com.bootcamp.mypos.mypos.api.item;
 import com.bootcamp.mypos.mypos.api.item.ItemValidator;
 import com.bootcamp.mypos.mypos.entity.Item;
 import com.bootcamp.mypos.mypos.entity.Item;
-import com.bootcamp.mypos.mypos.exception.ItemValidationException;
-import com.bootcamp.mypos.mypos.exception.ItemValidationException;
+import com.bootcamp.mypos.mypos.exception.ValidationException;
+import com.bootcamp.mypos.mypos.exception.ValidationException;
+import com.bootcamp.mypos.mypos.exception.ValidationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +25,7 @@ public class ItemValidatorTest {
 
 
 
-    @Test(expected = ItemValidationException.class)
+    @Test(expected = ValidationException.class)
     public void validateItemThrowsExceptionOnExistingName() throws Exception {
         Item item = new Item();
         item.setItemName("apple");
@@ -41,7 +42,7 @@ public class ItemValidatorTest {
 
     }
 
-    @Test(expected = ItemValidationException.class)
+    @Test(expected = ValidationException.class)
     public void validateItemThrowsExceptionOnInvalidAmount() throws Exception {
         Item item = new Item();
         item.setItemName("orange");
@@ -60,7 +61,7 @@ public class ItemValidatorTest {
     }
 
 
-    @Test(expected = ItemValidationException.class)
+    @Test(expected = ValidationException.class)
     public void validateIdThrowsExceptionOnNonExistentId() throws Exception {
         Item item = new Item();
         item.setItemName("orange");
@@ -78,7 +79,7 @@ public class ItemValidatorTest {
 
     }
 
-    @Test(expected = ItemValidationException.class)
+    @Test(expected = ValidationException.class)
     public void validateIdThrowsExceptionOnEmptyItemName() throws Exception {
         Item item = new Item();
         item.setItemName("");
@@ -96,7 +97,7 @@ public class ItemValidatorTest {
 
     }
 
-    @Test(expected = ItemValidationException.class)
+    @Test(expected = ValidationException.class)
     public void validateIdThrowsExceptionOnInvalidAmountAvailable() throws Exception {
         Item item = new Item();
         item.setItemName(null);

@@ -6,8 +6,8 @@ import com.bootcamp.mypos.mypos.entity.OrderItem;
 import com.bootcamp.mypos.mypos.entity.User;
 import com.bootcamp.mypos.mypos.entity.dto.OrderDTO;
 import com.bootcamp.mypos.mypos.entity.dto.OrderItemDTO;
-import com.bootcamp.mypos.mypos.exception.OrderValidationError;
-import com.bootcamp.mypos.mypos.exception.OrderValidationException;
+import com.bootcamp.mypos.mypos.exception.validation_errors.OrderValidationError;
+import com.bootcamp.mypos.mypos.exception.ValidationException;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +40,7 @@ public class OrderControllerTest {
     public void getOrderReturnsErrorMsgOnInvalidId() throws Exception {
         final Long orderId = 100L;
 
-        OrderValidationException validationException = new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
+        ValidationException validationException = new ValidationException(OrderValidationError.NON_EXISTENT_ID);
         Mockito.when(orderService.getOrder(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(orderController.getOrder(orderId).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
         Assertions.assertThat(
@@ -99,7 +99,7 @@ public class OrderControllerTest {
         Order returnedOrder = new ModelMapper().map(order, Order.class);
         returnedOrder.setUser(u);
 
-        OrderValidationException validationException = new OrderValidationException(OrderValidationError.UNIDENTIFIED_ORDER_STATE);
+        ValidationException validationException = new ValidationException(OrderValidationError.UNIDENTIFIED_ORDER_STATE);
 
         Mockito.when(orderService.createOrder(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(orderController.createOrder(order).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
@@ -170,7 +170,7 @@ public class OrderControllerTest {
         Order returnedOrder = new ModelMapper().map(order, Order.class);
         returnedOrder.setUser(u);
 
-        OrderValidationException validationException = new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
+        ValidationException validationException = new ValidationException(OrderValidationError.NON_EXISTENT_ID);
 
         Mockito.when(orderService.updateOrder(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(orderController.updateOrder(order).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
@@ -219,7 +219,7 @@ public class OrderControllerTest {
     public void deleteOrderReturnsErrorMsgOnInvalidId() throws Exception {
         final Long orderId = 100L;
 
-        OrderValidationException validationException = new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
+        ValidationException validationException = new ValidationException(OrderValidationError.NON_EXISTENT_ID);
         Mockito.when(orderService.deleteOrder(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(orderController.deleteOrder(orderId).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
         Assertions.assertThat(
@@ -257,7 +257,7 @@ public class OrderControllerTest {
         OrderItemDTO dto = new OrderItemDTO();
         dto.setItemId(100L);
 
-        OrderValidationException validationException = new OrderValidationException(OrderValidationError.NON_EXISTENT_ITEM_ID);
+        ValidationException validationException = new ValidationException(OrderValidationError.NON_EXISTENT_ITEM_ID);
         Mockito.when(orderService.addOrderItem(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(orderController.addItemToOrder(dto).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
         Assertions.assertThat(
@@ -276,7 +276,7 @@ public class OrderControllerTest {
         OrderItemDTO dto = new OrderItemDTO();
         dto.setItemId(100L);
 
-        OrderValidationException validationException = new OrderValidationException(OrderValidationError.QUANTITY_LARGER_THAN_AVAILABLE);
+        ValidationException validationException = new ValidationException(OrderValidationError.QUANTITY_LARGER_THAN_AVAILABLE);
         Mockito.when(orderService.addOrderItem(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(orderController.addItemToOrder(dto).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
         Assertions.assertThat(
@@ -317,7 +317,7 @@ public class OrderControllerTest {
     public void getOrderListReturnsErrorMsgOnInvalidId() throws Exception {
         final Long orderId = 100L;
 
-        OrderValidationException validationException = new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
+        ValidationException validationException = new ValidationException(OrderValidationError.NON_EXISTENT_ID);
         Mockito.when(orderService.getOrder(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(orderController.getOrderItems(orderId).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
         Assertions.assertThat(
@@ -358,7 +358,7 @@ public class OrderControllerTest {
         dto.setItemId(100L);
         dto.setOrderId(40L);
 
-        OrderValidationException validationException = new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
+        ValidationException validationException = new ValidationException(OrderValidationError.NON_EXISTENT_ID);
         Mockito.when(orderService.deleteOrderItem(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(orderController.deleteOrderItem(dto).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
         Assertions.assertThat(
@@ -413,7 +413,7 @@ public class OrderControllerTest {
         dto.setItemId(100L);
         dto.setOrderId(40L);
 
-        OrderValidationException validationException = new OrderValidationException(OrderValidationError.NON_EXISTENT_ID);
+        ValidationException validationException = new ValidationException(OrderValidationError.NON_EXISTENT_ID);
         Mockito.when(orderService.changeOrderItemQuantity(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(orderController.changeOrderItemQuantity(dto).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
         Assertions.assertThat(
@@ -433,7 +433,7 @@ public class OrderControllerTest {
         dto.setItemId(100L);
         dto.setOrderId(40L);
 
-        OrderValidationException validationException = new OrderValidationException(OrderValidationError.NON_EXISTENT_ITEM_ID);
+        ValidationException validationException = new ValidationException(OrderValidationError.NON_EXISTENT_ITEM_ID);
         Mockito.when(orderService.changeOrderItemQuantity(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(orderController.changeOrderItemQuantity(dto).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
         Assertions.assertThat(
@@ -454,7 +454,7 @@ public class OrderControllerTest {
         dto.setOrderId(40L);
         dto.setQuantity(1000);
 
-        OrderValidationException validationException = new OrderValidationException(OrderValidationError.INVALID_QUANTITY);
+        ValidationException validationException = new ValidationException(OrderValidationError.INVALID_QUANTITY);
         Mockito.when(orderService.changeOrderItemQuantity(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(orderController.changeOrderItemQuantity(dto).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
         Assertions.assertThat(

@@ -3,13 +3,16 @@ package com.bootcamp.mypos.mypos.api.item;
 import com.bootcamp.mypos.mypos.entity.ErrorMessage;
 import com.bootcamp.mypos.mypos.entity.Item;
 import com.bootcamp.mypos.mypos.entity.dto.ItemDTO;
-import com.bootcamp.mypos.mypos.exception.ItemValidationError;
-import com.bootcamp.mypos.mypos.exception.ItemValidationException;
+import com.bootcamp.mypos.mypos.exception.validation_errors.ItemValidationError;
+import com.bootcamp.mypos.mypos.exception.validation_errors.ValidationError;
+import com.bootcamp.mypos.mypos.exception.ValidationException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
+@SuppressWarnings("Duplicates") // error handling uses similar code
 @RestController
 @Api(value="mypos", tags = {"Item Controller"})
 @RequestMapping("api/items")
@@ -28,6 +32,8 @@ class ItemController {
 
     @Autowired
     private ItemService itemService;
+
+    private Logger logger = LoggerFactory.getLogger(ItemController.class);
 
     @ApiOperation(value = "View Details about the given product from id",response = Item.class)
     @ApiResponses(value = {
@@ -42,8 +48,7 @@ class ItemController {
             Item item = itemService.getItem(itemId);
             return new ResponseEntity<>(item, HttpStatus.OK);
 
-        } catch (ItemValidationException e) {
-
+        } catch (ValidationException e) {
             ErrorMessage message = new ErrorMessage();
             message.setStatus(400);
 
@@ -52,11 +57,13 @@ class ItemController {
             } else {
                 message.setErrorMessageText(e.getValidationError().getMessage());
             }
+            logger.error(e.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception e) {
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
+            logger.error(e.getMessage());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
         }
     }
@@ -75,13 +82,13 @@ class ItemController {
             item = itemService.createItem(item);
             return new ResponseEntity<>(item, HttpStatus.CREATED);
 
-        } catch (ItemValidationException ex) {
-
+        } catch (ValidationException ex) {
+            logger.error(ex.getMessage());
             ErrorMessage message = getErrorMessage(item, ex);
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception ex) {
-
+            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
@@ -102,12 +109,13 @@ class ItemController {
             item = itemService.updateItem(item);
             return new ResponseEntity<>(item, HttpStatus.OK);
 
-        } catch (ItemValidationException ex) {
+        } catch (ValidationException ex) {
+            logger.error(ex.getMessage());
             ErrorMessage message = getErrorMessage(item, ex);
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception ex) {
-
+            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
@@ -130,7 +138,8 @@ class ItemController {
 
             return new ResponseEntity<>(null, HttpStatus.OK);
 
-        } catch (ItemValidationException ex) {
+        } catch (ValidationException ex) {
+            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(400);
 
@@ -142,7 +151,7 @@ class ItemController {
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception ex) {
-
+            logger.error(ex.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR + ": " + ex.getMessage());
@@ -166,6 +175,7 @@ class ItemController {
             return new ResponseEntity<>(items, HttpStatus.OK);
 
         } catch (Exception e) {
+            logger.error(e.getMessage());
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
@@ -174,10 +184,10 @@ class ItemController {
 
 
     // populates the error message
-    private ErrorMessage getErrorMessage(Item item, ItemValidationException ex) {
+    private ErrorMessage getErrorMessage(Item item, ValidationException ex) {
         ErrorMessage message = new ErrorMessage();
 
-        ItemValidationError validationError = ex.getValidationError();
+        ValidationError validationError = ex.getValidationError();
         if (validationError == ItemValidationError.NON_EXISTENT_ID) {
             message.setErrorMessageText(validationError.getMessage() + ": " + item.getId());
         } else {

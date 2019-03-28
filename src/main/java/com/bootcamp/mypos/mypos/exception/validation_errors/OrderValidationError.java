@@ -1,6 +1,6 @@
-package com.bootcamp.mypos.mypos.exception;
+package com.bootcamp.mypos.mypos.exception.validation_errors;
 
-public enum OrderValidationError {
+public enum OrderValidationError implements ValidationError {
 
     UNIDENTIFIED_ORDER_STATE("Provided state is not valid (should be either open or closed)"),
     NON_EXISTENT_ID("Provided Order Id doesn't exist"),

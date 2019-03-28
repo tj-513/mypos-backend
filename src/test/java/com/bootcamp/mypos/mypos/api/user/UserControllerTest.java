@@ -4,8 +4,8 @@ import com.bootcamp.mypos.mypos.entity.ErrorMessage;
 import com.bootcamp.mypos.mypos.entity.Order;
 import com.bootcamp.mypos.mypos.entity.User;
 import com.bootcamp.mypos.mypos.entity.dto.UserDTO;
-import com.bootcamp.mypos.mypos.exception.UserValidationError;
-import com.bootcamp.mypos.mypos.exception.UserValidationException;
+import com.bootcamp.mypos.mypos.exception.validation_errors.UserValidationError;
+import com.bootcamp.mypos.mypos.exception.ValidationException;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +42,7 @@ public class UserControllerTest {
     public void getUserReturnsErrorMsgOnInvalidId() throws Exception {
         final Long userId = 100L;
 
-        UserValidationException validationException = new UserValidationException(UserValidationError.NON_EXISTENT_ID);
+        ValidationException validationException = new ValidationException(UserValidationError.NON_EXISTENT_ID);
         Mockito.when(userService.getUser(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(userController.getUser(userId).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
         Assertions.assertThat(
@@ -102,7 +102,7 @@ public class UserControllerTest {
         User returnedUser = new ModelMapper().map(user, User.class);
         returnedUser.setId(10l);
 
-        UserValidationException validationException = new UserValidationException(UserValidationError.DUPLICATE_USERNAME);
+        ValidationException validationException = new ValidationException(UserValidationError.DUPLICATE_USERNAME);
 
         Mockito.when(userService.createUser(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(userController.createUser(user).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
@@ -180,7 +180,7 @@ public class UserControllerTest {
         User returnedUser = new ModelMapper().map(user, User.class);
         returnedUser.setId(10l);
 
-        UserValidationException validationException = new UserValidationException(UserValidationError.DUPLICATE_USERNAME);
+        ValidationException validationException = new ValidationException(UserValidationError.DUPLICATE_USERNAME);
 
         Mockito.when(userService.updateUser(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(userController.updateUser(user).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
@@ -232,7 +232,7 @@ public class UserControllerTest {
     public void deleteUserReturnsErrorMsgOnInvalidId() throws Exception {
         final Long userId = 100L;
 
-        UserValidationException validationException = new UserValidationException(UserValidationError.NON_EXISTENT_ID);
+        ValidationException validationException = new ValidationException(UserValidationError.NON_EXISTENT_ID);
         Mockito.when(userService.deleteUser(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(userController.deleteUser(userId).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
         Assertions.assertThat(
@@ -272,7 +272,7 @@ public class UserControllerTest {
     public void getOrderListReturnsErrorMsgOnInvalidId() throws Exception {
         final Long userId = 100L;
 
-        UserValidationException validationException = new UserValidationException(UserValidationError.NON_EXISTENT_ID);
+        ValidationException validationException = new ValidationException(UserValidationError.NON_EXISTENT_ID);
         Mockito.when(userService.getOrderList(Mockito.any())).thenThrow(validationException);
         Assertions.assertThat(userController.getOrderList(userId).getStatusCode()).isEqualTo(HttpStatus.valueOf(400));
         Assertions.assertThat(

@@ -1,7 +1,7 @@
 package com.bootcamp.mypos.mypos.api.user;
 
 import com.bootcamp.mypos.mypos.entity.User;
-import com.bootcamp.mypos.mypos.exception.UserValidationException;
+import com.bootcamp.mypos.mypos.exception.ValidationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +18,7 @@ public class UserValidatorTest {
     UserRepository userRepository;
 
 
-    @Test(expected = UserValidationException.class)
+    @Test(expected = ValidationException.class)
     public void validateUserThrowsExceptionOnExistingEmail() throws Exception {
         User user = new User();
         user.setEmail("valid@gmail.com");
@@ -34,7 +34,7 @@ public class UserValidatorTest {
 
     }
 
-    @Test (expected = UserValidationException.class)
+    @Test (expected = ValidationException.class)
     public void validateUserThrowsExceptionOnNullEmail() throws Exception {
         User user = new User();
         UserValidator validator = new UserValidator();
@@ -43,7 +43,7 @@ public class UserValidatorTest {
 
 
     }
-    @Test (expected = UserValidationException.class)
+    @Test (expected = ValidationException.class)
     public void validateUserThrowsExceptionOnInvalidEmail() throws Exception  {
 
 
@@ -60,7 +60,7 @@ public class UserValidatorTest {
         validator.validateUser(user,userRepository);
     }
 
-    @Test (expected = UserValidationException.class)
+    @Test (expected = ValidationException.class)
     public void validateUserThrowsExceptionOnInvalidUsername() throws Exception {
         User user = new User();
         user.setEmail("nvali@dmail.com");

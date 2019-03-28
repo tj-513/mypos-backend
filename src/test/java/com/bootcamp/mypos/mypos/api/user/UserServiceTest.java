@@ -111,13 +111,13 @@ public class UserServiceTest {
     public void userLoginSuccessfully() throws Exception{
 
         UserDTO userDTO = new UserDTO();
-        userDTO.setPassword("somehashedpassword");
+        userDTO.setPassword("123");
 
 
 
         User user = new ModelMapper().map(userDTO,User.class);
 
-        user.setPassword("somehashedpassword");
+        user.setPassword("$2a$10$PJKmdKVhmQ.V/JXk9v.NJ.p.NA8JO6eeCfcKSG8dzCpepCTS5XsB.");
         user.setUsername("jdoe");
 
         User returnedUser = new ModelMapper().map(user,User.class);
@@ -132,13 +132,13 @@ public class UserServiceTest {
     public void userLoginReturnsNullOnWrongPassword() throws Exception{
 
         UserDTO userDTO = new UserDTO();
-        userDTO.setPassword("not-somehashedpassword");
+        userDTO.setPassword("not-correct password");
 
 
 
         User user = new ModelMapper().map(userDTO,User.class);
 
-        user.setPassword("somehashedpassword");
+        user.setPassword("$2a$10$PJKmdKVhmQ.V/JXk9v.NJ.p.NA8JO6eeCfcKSG8dzCpepCTS5XsB.");
         user.setUsername("jdoe");
 
         User returnedUser = new ModelMapper().map(user,User.class);
