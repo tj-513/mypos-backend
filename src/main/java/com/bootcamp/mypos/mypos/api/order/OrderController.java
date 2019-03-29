@@ -15,7 +15,6 @@ import io.swagger.annotations.ApiResponses;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -82,9 +81,8 @@ class OrderController {
     })
     @PostMapping()
     public ResponseEntity createOrder(@RequestBody OrderDTO orderDTO) {
-        Order order = null;
         try {
-            order = orderService.createOrder(orderDTO);
+            Order order = orderService.createOrder(orderDTO);
             return new ResponseEntity<>(order, HttpStatus.CREATED);
 
         } catch (ValidationException e) {

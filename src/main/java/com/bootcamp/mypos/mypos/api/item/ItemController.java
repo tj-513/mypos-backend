@@ -13,7 +13,6 @@ import io.swagger.annotations.ApiResponses;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +29,11 @@ class ItemController {
     private static final String MSG_SERVER_ERROR = "Server Error Occurred";
     private static final int CODE_SERVER_ERROR = 500;
 
-    @Autowired
     private ItemService itemService;
+
+    public ItemController(ItemService itemService) {
+        this.itemService = itemService;
+    }
 
     private Logger logger = LoggerFactory.getLogger(ItemController.class);
 
