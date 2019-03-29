@@ -63,7 +63,7 @@ class ItemController {
         } catch (Exception e) {
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
-            logger.error(e.getMessage());
+            logger.error(message.getErrorMessageText());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
         }
     }
@@ -84,14 +84,14 @@ class ItemController {
 
         } catch (ValidationException ex) {
             ErrorMessage message = getErrorMessage(item, ex);
-            logger.error(ex.getMessage());
+            logger.error(message.getErrorMessageText());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         } catch (Exception ex) {
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
-            logger.error(ex.getMessage());
+            logger.error(message.getErrorMessageText());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
         }
     }
@@ -118,7 +118,7 @@ class ItemController {
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
-            logger.error(ex.getMessage());
+            logger.error(message.getErrorMessageText());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         }
@@ -154,7 +154,7 @@ class ItemController {
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR + ": " + ex.getMessage());
-            logger.error(ex.getMessage());
+            logger.error(message.getErrorMessageText());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         }
@@ -177,7 +177,7 @@ class ItemController {
         } catch (Exception e) {
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
-            logger.error(e.getMessage());
+            logger.error(message.getErrorMessageText());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
         }
     }

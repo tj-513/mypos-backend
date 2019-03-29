@@ -33,9 +33,11 @@ class OrderController {
 
     private Logger logger = LoggerFactory.getLogger(OrderController.class);
 
-    @Autowired
     private OrderService orderService;
 
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @ApiOperation(value = "View Details about the given order from id", response = Item.class)
     @ApiResponses(value = {
@@ -66,7 +68,7 @@ class OrderController {
         } catch (Exception e) {
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
-            logger.error(e.getMessage());
+            logger.error(message.getErrorMessageText());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
         }
     }
@@ -94,7 +96,7 @@ class OrderController {
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
-            logger.error(e.getMessage());
+            logger.error(message.getErrorMessageText());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
         }
     }
@@ -123,7 +125,7 @@ class OrderController {
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
-            logger.error(e.getMessage());
+            logger.error(message.getErrorMessageText());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         }
@@ -161,7 +163,7 @@ class OrderController {
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR + ": " + e.getMessage());
-            logger.error(e.getMessage());
+            logger.error(message.getErrorMessageText());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         }
@@ -210,7 +212,7 @@ class OrderController {
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
-            logger.error(e.getMessage());
+            logger.error(message.getErrorMessageText());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         }
@@ -259,7 +261,7 @@ class OrderController {
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
-            logger.error(e.getMessage());
+            logger.error(message.getErrorMessageText());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         }
@@ -305,7 +307,7 @@ class OrderController {
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
             message.setErrorMessageText(MSG_SERVER_ERROR);
-            logger.error(e.getMessage());
+            logger.error(message.getErrorMessageText());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
 
         }
@@ -342,7 +344,7 @@ class OrderController {
             ErrorMessage message = new ErrorMessage();
             message.setStatus(CODE_SERVER_ERROR);
 
-            logger.error(e.getMessage());
+            logger.error(message.getErrorMessageText());
             return new ResponseEntity<>(message, HttpStatus.valueOf(message.getStatus()));
         }
     }
