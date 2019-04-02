@@ -11,13 +11,14 @@ import java.util.Comparator;
 import java.util.List;
 
 @Component
+public
 class UserService {
     @Autowired
     private UserRepository userRepository;
 
     private UserValidator userValidator = new UserValidator();
 
-    User createUser(User user) {
+    public User createUser(User user) {
 
         userValidator.validateUser(user, userRepository);
 
