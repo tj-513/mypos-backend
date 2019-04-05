@@ -1,17 +1,13 @@
 package com.bootcamp.mypos.mypos.api.greeting;
 
-public class Greeting {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+class Greeting {
     private String greetingMessage;
 
-    Greeting(String greetingMessage) {
-        this.greetingMessage = greetingMessage;
-    }
-
-    public String getGreetingMessage() {
-        return greetingMessage;
-    }
-
-    public void setGreetingMessage(String greetingMessage) {
-        this.greetingMessage = greetingMessage;
-    }
 }
