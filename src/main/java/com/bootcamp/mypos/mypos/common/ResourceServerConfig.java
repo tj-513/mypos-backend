@@ -22,7 +22,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/users/login", "/api", "/api/users", "/login", "/api/items/search/**").permitAll()
-                .antMatchers("/api/items/**", "/api/users/**", "/api/orders/**").authenticated()
+                .antMatchers("/api/items/**", "/api/users/**", "/api/orders/**").permitAll()
                 .and().exceptionHandling().authenticationEntryPoint(new AuthExceptionEntryPoint());
     }
 
